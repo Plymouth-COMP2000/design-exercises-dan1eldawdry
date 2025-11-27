@@ -45,10 +45,10 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Menu CRUD methods
-    public long insertMenuItem(...) { return -1; }
-    public android.database.Cursor getAllMenuItems() {return null; }
+    //public long insertMenuItem(...) { return -1; }
+    //public android.database.Cursor getAllMenuItems() {return null; }
 
     // Reservation CRUD methods
-    public long insertReservation(...) { return -1; }
-    public android.database.Cursor getAllReservations() { return null; }
+    //public long insertReservation(...) { return -1; }
+    //public android.database.Cursor getAllReservations() { return null; }
 }

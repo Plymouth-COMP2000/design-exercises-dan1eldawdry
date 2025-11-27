@@ -35,6 +35,8 @@ android {
 
 dependencies {
     implementation(libs.appcompat)
+    implementation("com.android.volley:volley:1.2.1") // Volley
+    implementation("com.google.code.gson:gson:2.10.1") // Gson
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
