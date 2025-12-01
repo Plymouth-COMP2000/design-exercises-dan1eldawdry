@@ -12,9 +12,10 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity {
 
     // UI elements
-    private EditText loginUsername;
+    private EditText loginEmail;
     private EditText loginPassword;
     private Button loginButton;
+    private Button staffLoginButton;
 
     private static final String STUDENT_ID = "10911123";
 
@@ -23,22 +24,26 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        loginUsername = findViewById(R.id.editText_email);
+        loginEmail = findViewById(R.id.editText_email);
         loginPassword = findViewById(R.id.editText_password);
         loginButton = findViewById(R.id.button_login_guest);
+        staffLoginButton = findViewById(R.id.button_staff_login);
 
         // listener
         loginButton.setOnClickListener(v -> handleLoginAttempt());
+        staffLoginButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, StaffLoginActivity.class));
+        });
     }
 
     // starts login process by calling UserService to get users
     private void handleLoginAttempt() {
         // grabs and validates the input
-        String enteredUsername = loginUsername.getText().toString().trim();
+        String enteredEmail = loginEmail.getText().toString().trim();
         String enteredPassword = loginPassword.getText().toString().trim();
 
-        if (enteredUsername.isEmpty() || enteredPassword.isEmpty()) {
-            Toast.makeText(this, "enter both username and password.", Toast.LENGTH_SHORT).show();
+        if (enteredEmail.isEmpty() || enteredPassword.isEmpty()) {
+            Toast.makeText(this, "enter both email and password.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -53,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(List<User> userList) {
                 loginButton.setEnabled(true);
                 // moves to local authentication
-                localAuthentication(enteredUsername, enteredPassword, userList);
+                localAuthentication(enteredEmail, enteredPassword, userList);
             }
 
             // fail
@@ -66,27 +71,25 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // local cred check and role based access check
-    private void localAuthentication(String username, String password, List<User> userList) {
+    private void localAuthentication(String email, String password, List<User> userList) {
 
         for (User user : userList) {
             // check creds match
-            if (user.username.equals(username) && user.password.equals(password)) {
+            if (user.email.equals(email) && user.password.equals(password)) {
 
                 // check role
                 String userRole = user.usertype;
+                String username = user.username; // for welcocme test
 
-                if (userRole.equalsIgnoreCase("staff")) {
-                    // staff route
-                    Toast.makeText(this, "Staff Login Successful", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, StaffDashboardActivity.class));
-                } else {
+                if (userRole.equalsIgnoreCase("guest")) {
                     // guest route
                     Toast.makeText(this, "Welcome " + username, Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(this, MenuListActivity.class));
+                } else {
+                    // if login work but staff
+                    Toast.makeText(this, "You are a staff user. Move over to Staff Login", Toast.LENGTH_LONG).show();
+                    return;
                 }
-
-                finish();
-                return;
             }
         }
 

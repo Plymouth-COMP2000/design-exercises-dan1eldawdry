@@ -3,18 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_login_layout"
+    android:id="@+id/main_staff_login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="32dp"
-    android:background="#FFFFFF"
-    tools:context=".LoginActivity">
+    android:background="#F5F5F5"
+    tools:context=".StaffLoginActivity">
 
-    <TextView
-        android:id="@+id/text_app_title"
+    <Button
+        android:id="@+id/button_back_to_guest_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Restaurant App"
+        android:text="← Guest Login"
+        android:textAllCaps="false"
+        android:textColor="#2E7D32"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_staff_login_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Staff Login"
         android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="#2E7D32"
@@ -23,39 +34,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/text_input_email_layout" />
+        app:layout_constraintBottom_toTopOf="@+id/text_input_staff_id_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_email_layout"
+        android:id="@+id/text_input_staff_id_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_app_title"
-        app:layout_constraintBottom_toTopOf="@+id/text_input_password_layout">
+        app:layout_constraintTop_toBottomOf="@+id/text_staff_login_title"
+        app:layout_constraintBottom_toTopOf="@+id/text_input_staff_password_layout">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editText_email"
+            android:id="@+id/editText_staff_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email Address"
+            android:hint="Staff Email Address"
             android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_password_layout"
+        android:id="@+id/text_input_staff_password_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_input_email_layout"
-        app:layout_constraintBottom_toTopOf="@+id/button_login_guest">
+        app:layout_constraintTop_toBottomOf="@+id/text_input_staff_id_layout"
+        app:layout_constraintBottom_toTopOf="@+id/button_staff_login_submit">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editText_password"
+            android:id="@+id/editText_staff_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
@@ -64,7 +75,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/button_login_guest"
+        android:id="@+id/button_staff_login_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="LOGIN"
@@ -73,24 +84,10 @@
         android:textStyle="bold"
         android:backgroundTint="#2E7D32"
         android:textColor="#FFFFFF"
-        android:layout_marginBottom="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_input_password_layout"
-        app:layout_constraintBottom_toTopOf="@+id/button_staff_login" />
-
-    <Button
-        android:id="@+id/button_staff_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="STAFF LOGIN"
-        android:textSize="14sp"
-        android:textColor="#2E7D32"
-        android:textStyle="bold"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_login_guest"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/text_input_staff_password_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

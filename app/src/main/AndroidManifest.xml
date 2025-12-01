@@ -12,19 +12,20 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.RestaurantGuestApp">
+        android:theme="@style/Theme.RestaurantGuestApp"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".StaffLoginActivity"
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
         <activity android:name=".MenuListActivity" />
         <activity android:name=".StaffDashboardActivity" />
         <activity
