@@ -10,6 +10,7 @@ public class MenuListActivity extends AppCompatActivity {
 
     private Button reservationsButton;
     private Button callButton;
+    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +20,7 @@ public class MenuListActivity extends AppCompatActivity {
         // find bottom nav buttons
         reservationsButton = findViewById(R.id.button_reservations);
         callButton = findViewById(R.id.button_call);
+        logoutButton = findViewById(R.id.button_logout)
 
         setupButtonListeners();
     }
@@ -33,5 +35,15 @@ public class MenuListActivity extends AppCompatActivity {
         callButton.setOnClickListener(v -> {
             startActivity(new Intent(MenuListActivity.this, ContactActivity.class));
         });
+
+        logoutButton.setOnClickListener(v -> logoutUser());
+    }
+    // logout method
+    private void logoutUser() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        // clear previous activites and start new screen
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

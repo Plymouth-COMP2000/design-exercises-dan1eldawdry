@@ -9,11 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MyReservationsActivity extends AppCompatActivity {
 
+    private Button logoutButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_reservations);
 
+        logoutButton = findViewById(R.id.button_logout);
         setupNavigationAndActions();
 
         // load users existing rservations when screen opens
@@ -40,6 +43,8 @@ public class MyReservationsActivity extends AppCompatActivity {
         callNavButton.setOnClickListener(v -> {
             startActivity(new Intent(MyReservationsActivity.this, ContactActivity.class));
         });
+
+        logoutButton.setOnClickListener(v -> logoutUser());
     }
 
     // placeholder method for getting the users reservations
@@ -47,5 +52,14 @@ public class MyReservationsActivity extends AppCompatActivity {
         // where I connect to my database like appdatabasehelper
         // get reservation records and update list
         Toast.makeText(this, "reservations fetched and displayed", Toast.LENGTH_SHORT).show();
+    }
+
+    // logout method
+    private void logoutUser() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        // clear previous activites and start new screen
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }
