@@ -22,10 +22,9 @@ public class UserService {
     private static RequestQueue requestQueue;
     private static final Gson gson = new Gson();
 
-    // Initialises the RequestQueue if needed
+    // starts requestqueue if needed
     private static void initQueue(Context context) {
         if (requestQueue == null) {
-            // Using Application Context prevents memory leaks
             requestQueue = Volley.newRequestQueue(context.getApplicationContext());
         }
     }
