@@ -1,243 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    tools:context=".MyReservationsActivity">
 
-    <!-- top bar with back button and title -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/top_bar_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
         android:background="#F5F5F5"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- back button -->
-        <Button
-            android:id="@+id/button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="←"
-            android:textSize="20sp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:textColor="#2E7D32"
-            android:padding="8dp" />
-
-        <!-- title -->
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/text_reservations_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="My Reservations"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#2E7D32"
             android:gravity="center" />
 
-        <!-- invisible bit to balance the back button -->
-        <View
-            android:layout_width="48dp"
-            android:layout_height="1dp" />
-
     </LinearLayout>
 
-    <!-- new reservation button -->
-    <Button
-        android:id="@+id/button_new_reservation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="+ NEW RESERVATION"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="#2E7D32"
-        android:textColor="#FFFFFF"
-        android:padding="16dp"
-        android:layout_margin="16dp" />
-
-    <!-- reservation list -->
     <ScrollView
-        android:layout_width="match_parent"
+        android:id="@+id/reservations_scroll_view"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/top_bar_layout"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
-            android:id="@+id/linear_layout_reservations"
+            android:id="@+id/linear_layout_reservation_list_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
 
-            <!-- upcoming reservation list -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="*** UPCOMING ***"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#666666"
-                android:layout_marginBottom="16dp" />
-
-            <!-- 1st reservation -->
-            <LinearLayout
+            <Button
+                android:id="@+id/button_new_reservation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FAFAFA"
+                android:text="BOOK NEW RESERVATION"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="#2E7D32"
+                android:textColor="#FFFFFF"
                 android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sat, Nov 15 - 19:30"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#333333" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Party: 2 • Status: Confirmed"
-                    android:textSize="14sp"
-                    android:textColor="#666666"
-                    android:layout_marginTop="4dp" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_reservation_item_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FAFAFA">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end"
-                    android:layout_marginTop="12dp">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <Button
-                        android:id="@+id/button_edit_1"
+                    <TextView
+                        android:id="@+id/text_res_date_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="25th Dec 2025 at 7:00 PM (Confirmed)"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333" />
+
+                    <TextView
+                        android:id="@+id/text_res_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="4 Guests | Table 12"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:layout_marginTop="4dp" />
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="EDIT"
-                        android:textColor="#2E7D32"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:paddingHorizontal="16dp" />
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:layout_gravity="end">
 
-                    <Button
-                        android:id="@+id/button_cancel_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CANCEL"
-                        android:textColor="#D32F2F"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:paddingHorizontal="16dp" />
+                        <Button
+                            android:id="@+id/button_edit_1"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="EDIT"
+                            android:textSize="14sp"
+                            android:textColor="#2E7D32" />
+
+                        <Button
+                            android:id="@+id/button_cancel_1"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CANCEL"
+                            android:textSize="14sp"
+                            android:textColor="#C62828" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            <!-- 2nd reservation -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FAFAFA"
-                android:padding="16dp"
-                android:layout_marginBottom="24dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fri, Nov 21 - 20:00"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#333333" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Party: 4 • Status: Confirmed"
-                    android:textSize="14sp"
-                    android:textColor="#666666"
-                    android:layout_marginTop="4dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end"
-                    android:layout_marginTop="12dp">
-
-                    <Button
-                        android:id="@+id/button_edit_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="EDIT"
-                        android:textColor="#2E7D32"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:paddingHorizontal="16dp" />
-
-                    <Button
-                        android:id="@+id/button_cancel_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CANCEL"
-                        android:textColor="#D32F2F"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:paddingHorizontal="16dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- past reservationa -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="*** PAST ***"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#666666"
-                android:layout_marginBottom="16dp" />
-
-            <!-- past reservation example -->
-            <LinearLayout
+                android:id="@+id/text_no_reservations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FAFAFA"
-                android:padding="16dp"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mon, Nov 10 - 19:00"
-                    android:textSize="16sp"
-                    android:textColor="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Party: 2 • Status: Completed"
-                    android:textSize="14sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-
-            </LinearLayout>
+                android:text="You currently have no upcoming reservations."
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:visibility="gone"
+                android:paddingTop="32dp" />
 
         </LinearLayout>
-
     </ScrollView>
 
-    <!-- bottom bar -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/bottom_nav_bar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#F5F5F5"
-        android:paddingVertical="8dp">
+        android:paddingVertical="8dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
-            android:id="@+id/button_menu"
+            android:id="@+id/button_menu_nav"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -246,7 +163,7 @@
             android:background="@android:color/transparent" />
 
         <Button
-            android:id="@+id/button_reservations"
+            android:id="@+id/button_reservations_nav"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -256,7 +173,7 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/button_notifications"
+            android:id="@+id/button_call_nav"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -266,4 +183,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

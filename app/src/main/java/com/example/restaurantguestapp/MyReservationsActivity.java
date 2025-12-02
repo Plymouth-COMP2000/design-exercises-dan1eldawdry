@@ -1,24 +1,51 @@
 package com.example.restaurantguestapp;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MyReservationsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_my_reservations);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        setupNavigationAndActions();
+
+        // load users existing rservations when screen opens
+        fetchAndDisplayReservations();
+    }
+
+    private void setupNavigationAndActions() {
+        Button newReservationButton = findViewById(R.id.button_new_reservation);
+        Button menuNavButton = findViewById(R.id.button_menu); 
+        Button callNavButton = findViewById(R.id.button_call);
+
+        // new reservation nav
+        newReservationButton.setOnClickListener(v -> {
+            startActivity(new Intent(MyReservationsActivity.this, ReservationActivity.class));
         });
+
+        // menu list nav
+        menuNavButton.setOnClickListener(v -> {
+            startActivity(new Intent(MyReservationsActivity.this, MenuListActivity.class));
+            finish();
+        });
+
+        // contact screen nav
+        callNavButton.setOnClickListener(v -> {
+            startActivity(new Intent(MyReservationsActivity.this, ContactActivity.class));
+        });
+    }
+
+    // placeholder method for getting the users reservations
+    private void fetchAndDisplayReservations() {
+        // where I connect to my database like appdatabasehelper
+        // get reservation records and update list
+        Toast.makeText(this, "reservations fetched and displayed", Toast.LENGTH_SHORT).show();
     }
 }
