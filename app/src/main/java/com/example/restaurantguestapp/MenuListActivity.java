@@ -20,7 +20,7 @@ public class MenuListActivity extends AppCompatActivity {
         // find bottom nav buttons
         reservationsButton = findViewById(R.id.button_reservations);
         callButton = findViewById(R.id.button_call);
-        logoutButton = findViewById(R.id.button_logout)
+        logoutButton = findViewById(R.id.button_logout);
 
         setupButtonListeners();
     }
