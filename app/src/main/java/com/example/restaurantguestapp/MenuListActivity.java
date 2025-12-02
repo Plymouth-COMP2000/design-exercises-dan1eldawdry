@@ -1,24 +1,37 @@
 package com.example.restaurantguestapp;
 
 import android.os.Bundle;
+import android.content.Intent;
+import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MenuListActivity extends AppCompatActivity {
+
+    private Button reservationsButton;
+    private Button callButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_menu_list);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // find bottom nav buttons
+        reservationsButton = findViewById(R.id.button_reservations);
+        callButton = findViewById(R.id.button_call);
+
+        setupButtonListeners();
+    }
+
+    private void setupButtonListeners() {
+        // listner for reservations
+        reservationsButton.setOnClickListener(v -> {
+            startActivity(new Intent(MenuListActivity.this, MyReservationsActivity.class));
+        });
+
+        // listener for call
+        callButton.setOnClickListener(v -> {
+            startActivity(new Intent(MenuListActivity.this, ContactActivity.class));
         });
     }
 }

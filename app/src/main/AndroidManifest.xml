@@ -15,6 +15,9 @@
         android:theme="@style/Theme.RestaurantGuestApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ContactActivity"
+            android:exported="false" />
+        <activity
             android:name=".StaffLoginActivity"
             android:exported="false" />
         <activity
