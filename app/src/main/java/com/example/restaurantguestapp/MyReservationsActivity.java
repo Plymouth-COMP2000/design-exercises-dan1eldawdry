@@ -22,8 +22,8 @@ public class MyReservationsActivity extends AppCompatActivity {
 
     private void setupNavigationAndActions() {
         Button newReservationButton = findViewById(R.id.button_new_reservation);
-        Button menuNavButton = findViewById(R.id.button_menu); 
-        Button callNavButton = findViewById(R.id.button_call);
+        Button menuNavButton = findViewById(R.id.button_menu_nav);
+        Button callNavButton = findViewById(R.id.button_call_nav);
 
         // new reservation nav
         newReservationButton.setOnClickListener(v -> {
