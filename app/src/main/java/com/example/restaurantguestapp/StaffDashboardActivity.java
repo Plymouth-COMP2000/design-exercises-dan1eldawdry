@@ -10,8 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class StaffDashboardActivity extends AppCompatActivity {
 
     private Button logoutButton;
-    private Button manageMenuButton;
-    private Button viewReservationsButton;
+    private Button manageMenuNavButton;
+    private Button viewReservationsNavButton;
+    private Button dashboardNavButton;
 
     // static but will by dynamic fields
     private TextView newReservationsAmountText;
@@ -23,8 +24,9 @@ public class StaffDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_staff_dashboard);
 
         logoutButton = findViewById(R.id.button_logout);
-        manageMenuButton = findViewById(R.id.button_manage_menu);
-        viewReservationsButton = findViewById(R.id.button_view_reservations);
+        manageMenuNavButton = findViewById(R.id.button_nav_manage_menu);
+        dashboardNavButton = findViewById(R.id.button_nav_dashboard);
+        viewReservationsNavButton = findViewById(R.id.button_nav_view_reservations);
         newReservationsAmountText = findViewById(R.id.text_new_reservations_amount);
         totalMenuItemsAmountText = findViewById(R.id.text_total_menu_items_amount);
 
@@ -38,12 +40,18 @@ public class StaffDashboardActivity extends AppCompatActivity {
 
         logoutButton.setOnClickListener(v -> logoutUser());
 
-        manageMenuButton.setOnClickListener(v -> {
+        if (dashboardNavButton != null) {
+            dashboardNavButton.setOnClickListener(v -> {
+                // already on, dont do anything
+            });
+        }
+
+        manageMenuNavButton.setOnClickListener(v -> {
             Intent intent = new Intent(StaffDashboardActivity.this, ManageMenuActivity.class);
             startActivity(intent);
         });
 
-        viewReservationsButton.setOnClickListener(v -> {
+        viewReservationsNavButton.setOnClickListener(v -> {
             Intent intent = new Intent(StaffDashboardActivity.this, ViewReservationsActivity.class);
             startActivity(intent);
         });
