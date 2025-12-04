@@ -34,7 +34,8 @@ public class ManageMenuActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(v -> logoutUser());
 
         addNewItemButton.setOnClickListener(v -> {
-            // will add this later on
+            Intent intent = new Intent(ManageMenuActivity.this, AddMenuItemActivity.class);
+            startActivity(intent);
         });
 
         dashboardNavButton.setOnClickListener(v -> {
