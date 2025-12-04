@@ -3,6 +3,7 @@ package com.example.restaurantguestapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MyReservationsActivity extends AppCompatActivity {
 
     private Button logoutButton;
+    private TextView reservationStatusText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +19,7 @@ public class MyReservationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_reservations);
 
         logoutButton = findViewById(R.id.button_logout);
+        reservationStatusText = findViewById(R.id.text_reservation_status);
         setupNavigationAndActions();
 
         // load users existing rservations when screen opens
@@ -50,8 +53,26 @@ public class MyReservationsActivity extends AppCompatActivity {
     // placeholder method for getting the users reservations
     private void fetchAndDisplayReservations() {
         // where I connect to my database like appdatabasehelper
+
+        // get latest reservation status
+        String status = getLatestReservationStatus();
+        updateReservationStatus(status);
+
         // get reservation records and update list
         Toast.makeText(this, "reservations fetched and displayed", Toast.LENGTH_SHORT).show();
+    }
+
+    // placeholder of status from database
+    private String getLatestReservationStatus() {
+        // query database here later
+        // confirm is default
+        return "Confirmed";
+    }
+
+    private void updateReservationStatus(String status) {
+        if (reservationStatusText != null) {
+            reservationStatusText.setText("Status: " + status);
+        }
     }
 
     // logout method
