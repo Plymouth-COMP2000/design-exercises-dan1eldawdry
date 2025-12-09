@@ -39,7 +39,7 @@ public class ReservationActivity extends AppCompatActivity {
     private void setupReservationFormActions() {
         Button backButton = findViewById(R.id.button_back);
         Button selectDateButton = findViewById(R.id.button_select_date);
-        Button confirmBookingButton = findViewById(R.id.button_confirm_booking);
+        Button buttonConfirmBooking = findViewById(R.id.button_confirm_booking);
 
         backButton.setOnClickListener(v -> finish());
 
@@ -47,8 +47,36 @@ public class ReservationActivity extends AppCompatActivity {
 
         selectedTimeText.setOnClickListener(v -> openTimePicker());
 
-        confirmBookingButton.setOnClickListener(v -> saveReservation());
+        buttonConfirmBooking.setOnClickListener(v -> {
+
+            String date = selectedDateText.getText().toString();
+            String time = selectedTimeText.getText().toString();
+            int groupSize = Integer.parseInt(groupSizeEditText.getText().toString());
+            String requests = specialRequestsEditText.getText().toString();
+
+            // logged in user for now
+            String username = "oliver_hall";
+
+            AppDatabaseHelper db = new AppDatabaseHelper(ReservationActivity.this);
+
+            boolean success = db.insertReservation(
+                    username,
+                    date,
+                    time,
+                    groupSize,
+                    requests,
+                    "Booked"
+            );
+
+            if (success) {
+                Toast.makeText(this, "Reservation Saved", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Error saving reservation", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     private void openDatePicker() {
         final Calendar c = Calendar.getInstance();

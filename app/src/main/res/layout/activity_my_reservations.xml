@@ -87,14 +87,13 @@
                 android:textColor="#333333"
                 android:layout_marginBottom="8dp" />
 
-            <TextView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_reservations"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:gravity="center"
-                android:text="placeholder for reservations using recycler view"
-                android:background="#EEEEEE"
-                android:textColor="#666666"
-                android:textSize="14sp" />
+                android:layout_height="wrap_content"
+                android:padding="8dp"/>
+
+
 
         </LinearLayout>
     </ScrollView>

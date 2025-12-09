@@ -7,6 +7,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 public class MyReservationsActivity extends AppCompatActivity {
 
@@ -22,6 +26,20 @@ public class MyReservationsActivity extends AppCompatActivity {
 
         // load users existing rservations when screen opens
         fetchAndDisplayReservations();
+
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+
+        // logged in user for now
+        String username = "oliver_hall";
+
+        ArrayList<ReservationModel> list = db.getReservationsForUser(username);
+
+        ReservationAdapter adapter = new ReservationAdapter(this, list);
+
+        RecyclerView rv = findViewById(R.id.recycler_view_reservations);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(adapter);
+
     }
 
     private void setupNavigationAndActions() {

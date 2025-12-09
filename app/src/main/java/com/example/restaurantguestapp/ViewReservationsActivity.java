@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 public class ViewReservationsActivity extends AppCompatActivity {
 
@@ -25,6 +29,15 @@ public class ViewReservationsActivity extends AppCompatActivity {
 
         setupButtonListeners();
         // methods to get and display reservations will go here
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        ArrayList<ReservationModel> list = db.getAllReservations();
+
+        ReservationAdapter adapter = new ReservationAdapter(this, list);
+
+        RecyclerView rv = findViewById(R.id.recycler_view_staff_reservations);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(adapter);
+
     }
 
     private void setupButtonListeners() {
