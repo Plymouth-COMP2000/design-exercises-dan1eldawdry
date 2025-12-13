@@ -163,5 +163,11 @@ public class ReservationActivity extends AppCompatActivity {
             );
             success = db.editReservation(model);
         }
+        if (success) {
+            Toast.makeText(this, "Reservation saved", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            Toast.makeText(this, "Error saving reservation", Toast.LENGTH_SHORT).show();
+        }
     }
 }
