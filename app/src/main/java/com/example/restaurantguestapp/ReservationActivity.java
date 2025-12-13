@@ -19,13 +19,24 @@ public class ReservationActivity extends AppCompatActivity {
     private TextView selectedTimeText;
     private EditText groupSizeEditText;
     private EditText specialRequestsEditText;
+    private AppDatabaseHelper db;
+    private int editingReservationId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation);
 
+        db = new AppDatabaseHelper(this);
+
         initializeUI();
+
+        // checks if its editing
+        editingReservationId = getIntent().getIntExtra("reservation_id", -1);
+        if (editingReservationId != -1) {
+            loadReservation(); // fill fields for editing
+        }
+
         setupReservationFormActions();
     }
 
@@ -39,7 +50,7 @@ public class ReservationActivity extends AppCompatActivity {
     private void setupReservationFormActions() {
         Button backButton = findViewById(R.id.button_back);
         Button selectDateButton = findViewById(R.id.button_select_date);
-        Button buttonConfirmBooking = findViewById(R.id.button_confirm_booking);
+        Button confirmBookingButton = findViewById(R.id.button_confirm_booking);
 
         backButton.setOnClickListener(v -> finish());
 
@@ -47,36 +58,9 @@ public class ReservationActivity extends AppCompatActivity {
 
         selectedTimeText.setOnClickListener(v -> openTimePicker());
 
-        buttonConfirmBooking.setOnClickListener(v -> {
-
-            String date = selectedDateText.getText().toString();
-            String time = selectedTimeText.getText().toString();
-            int groupSize = Integer.parseInt(groupSizeEditText.getText().toString());
-            String requests = specialRequestsEditText.getText().toString();
-
-            // logged in user for now
-            String username = "oliver_hall";
-
-            AppDatabaseHelper db = new AppDatabaseHelper(ReservationActivity.this);
-
-            boolean success = db.insertReservation(
-                    username,
-                    date,
-                    time,
-                    groupSize,
-                    requests,
-                    "Booked"
-            );
-
-            if (success) {
-                Toast.makeText(this, "Reservation Saved", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(this, "Error saving reservation", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // always go through saveReservation()
+        confirmBookingButton.setOnClickListener(v -> saveReservation());
     }
-
 
     private void openDatePicker() {
         final Calendar c = Calendar.getInstance();
@@ -111,18 +95,29 @@ public class ReservationActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    private void loadReservation() {
+        ReservationModel r = db.getReservationById(editingReservationId);
+        if (r == null) return;
+
+        // fill fields
+        selectedDateText.setText(r.getDate());
+        selectedTimeText.setText(r.getTime());
+        groupSizeEditText.setText(String.valueOf(r.getGroupSize()));
+        specialRequestsEditText.setText(r.getSpecialRequests());
+    }
+
     private void saveReservation() {
-        String date = selectedDateText.getText().toString();
-        String time = selectedTimeText.getText().toString();
+        String date = selectedDateText.getText().toString().trim();
+        String time = selectedTimeText.getText().toString().trim();
         String groupSizeStr = groupSizeEditText.getText().toString().trim();
         String requests = specialRequestsEditText.getText().toString().trim();
 
-        // validation
-        if (date.equals("Select Date")) {
+        // simple validation
+        if (date.equals("Select Date") || date.isEmpty()) {
             Toast.makeText(this, "Please select a reservation date.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (time.equals("Select Time")) {
+        if (time.equals("Select Time") || time.isEmpty()) {
             Toast.makeText(this, "Please select a reservation time.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -131,30 +126,42 @@ public class ReservationActivity extends AppCompatActivity {
             return;
         }
 
+        int groupSize;
         try {
-            int groupSize = Integer.parseInt(groupSizeStr);
-
-            // logic to prevent booking 0 people or very large groups
-            if (groupSize <= 0 || groupSize > 20) {
-                Toast.makeText(this, "Group size must be between 1 and 20.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // database point
-
-            // call appdatabasehelper here
-            // AppDatabaseHelper dbHelper = AppDatabaseHelper.getInstance(this);
-            // dbHelper.insertReservation(date, time, groupSize, requests);
-
-
-            // placeholder message
-            String confirmation = "Booking Confirmed for " + groupSize + " guests on " + date + " at " + time;
-            Toast.makeText(this, confirmation, Toast.LENGTH_LONG).show();
-
-            finish();
-
+            groupSize = Integer.parseInt(groupSizeStr);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Invalid group size entered.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Group size must be a number.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // username for now
+        String username = "oliver_hall";
+        String status = "Booked";
+
+        boolean success;
+
+        if (editingReservationId == -1) {
+            // making a new reservation uses insertReservation
+            success = db.insertReservation(
+                    username,
+                    date,
+                    time,
+                    groupSize,
+                    requests,
+                    status
+            );
+        } else {
+            // if editing existing reservation. then it uses editReservation
+            ReservationModel model = new ReservationModel(
+                    editingReservationId,
+                    username,
+                    date,
+                    time,
+                    groupSize,
+                    requests,
+                    status
+            );
+            success = db.editReservation(model);
         }
     }
 }

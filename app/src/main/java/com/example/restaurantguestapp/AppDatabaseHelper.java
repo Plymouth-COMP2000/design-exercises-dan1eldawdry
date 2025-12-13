@@ -111,5 +111,55 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return list;
     }
+
+    // edit a reservation
+    public boolean editReservation(ReservationModel model) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("date", model.getDate());
+        values.put("time", model.getTime());
+        values.put("group_size", model.getGroupSize());
+        values.put("special_requests", model.getSpecialRequests());
+
+        int rows = db.update("reservations", values, "id=?", new String[]{String.valueOf(model.getId())});
+        return rows > 0;
+    }
+
+    // delete a reservation
+    public boolean deleteReservation(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete("reservations", "id=?", new String[]{String.valueOf(id)});
+        return rows > 0;
+    }
+
+    // get a single reservation by its id
+    public ReservationModel getReservationById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM reservations WHERE id=?",
+                new String[]{String.valueOf(id)}
+        );
+
+        ReservationModel r = null;
+
+        if (cursor.moveToFirst()) {
+            r = new ReservationModel(
+                    cursor.getInt(0),   // id
+                    cursor.getString(1),// username
+                    cursor.getString(2),// date
+                    cursor.getString(3),// time
+                    cursor.getInt(4),   // group size
+                    cursor.getString(5),// special requests
+                    cursor.getString(6) // status
+            );
+        }
+
+        cursor.close();
+        return r;
+    }
+
+
 }
 
