@@ -160,6 +160,22 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         return r;
     }
 
+    // so i can update staff dashboard reservation counter
+    public int getReservationCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM reservations",
+                null
+        );
 
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        db.close();
+        return count;
+    }
 }
 

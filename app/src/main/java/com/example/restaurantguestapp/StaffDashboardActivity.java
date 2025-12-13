@@ -17,6 +17,7 @@ public class StaffDashboardActivity extends AppCompatActivity {
     // static but will by dynamic fields
     private TextView newReservationsAmountText;
     private TextView totalMenuItemsAmountText;
+    private AppDatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +30,19 @@ public class StaffDashboardActivity extends AppCompatActivity {
         viewReservationsNavButton = findViewById(R.id.button_nav_view_reservations);
         newReservationsAmountText = findViewById(R.id.text_new_reservations_amount);
         totalMenuItemsAmountText = findViewById(R.id.text_total_menu_items_amount);
-
+        db = new AppDatabaseHelper(this);
         setupButtonListeners();
 
-        // placeholder to be replaced by database stuff later
-        updateDashboardData();
+        loadReservationCount();
     }
+
+    // makes sure it updates when i return to the dashboard
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadReservationCount();
+    }
+
 
     private void setupButtonListeners() {
 
@@ -66,13 +74,9 @@ public class StaffDashboardActivity extends AppCompatActivity {
         finish();
     }
 
-    // placeholder for future database implementation
-    private void updateDashboardData() {
-        // dynamic update logic
-        // newReservationsAmountText.setText(String.valueOf(DatabaseHelper.getNewReservationsCount()));
-        // totalMenuItemsAmountText.setText(String.valueOf(DatabaseHelper.getTotalMenuItemsCount()));
-
-        newReservationsAmountText.setText("5");
-        totalMenuItemsAmountText.setText("15");
+    private void loadReservationCount() {
+        int count = db.getReservationCount();
+        newReservationsAmountText.setText(String.valueOf(count));
     }
+
 }
