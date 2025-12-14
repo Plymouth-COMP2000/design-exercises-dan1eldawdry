@@ -16,11 +16,14 @@ public class ViewReservationsActivity extends AppCompatActivity {
     private Button dashboardNavButton;
     private Button manageMenuNavButton;
     private Button viewReservationsNavButton;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_reservations);
+
+        username = getIntent().getStringExtra("username"); // gets username thats passed through
 
         logoutButton = findViewById(R.id.button_logout);
         dashboardNavButton = findViewById(R.id.button_nav_dashboard);

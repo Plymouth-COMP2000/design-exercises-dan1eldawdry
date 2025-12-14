@@ -21,11 +21,14 @@ public class ReservationActivity extends AppCompatActivity {
     private EditText specialRequestsEditText;
     private AppDatabaseHelper db;
     private int editingReservationId = -1;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation);
+
+        username = getIntent().getStringExtra("username"); // gets username that was passed through
 
         db = new AppDatabaseHelper(this);
 
@@ -135,7 +138,6 @@ public class ReservationActivity extends AppCompatActivity {
         }
 
         // username for now
-        String username = "oliver_hall";
         String status = "Booked";
 
         boolean success;

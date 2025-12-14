@@ -48,6 +48,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         holder.buttonEdit.setOnClickListener(v -> {
             Intent intent = new Intent(context, ReservationActivity.class);
             intent.putExtra("reservation_id", r.getId());   // tells activity to load and edit
+            intent.putExtra("username", r.getUsername()); // edits according to the correct username
             context.startActivity(intent);
         });
 

@@ -84,7 +84,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (userRole.equalsIgnoreCase("guest")) {
                     // guest route
                     Toast.makeText(this, "Welcome " + username, Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, MenuListActivity.class));
+                    Intent intent = new Intent(LoginActivity.this, MenuListActivity.class);
+                    intent.putExtra("username", username); // passes the username through
+                    startActivity(intent);
+                    finish();
+
                 } else {
                     // if login work but staff
                     Toast.makeText(this, "You are a staff user. Move over to Staff Login", Toast.LENGTH_LONG).show();

@@ -12,11 +12,15 @@ public class ContactActivity extends AppCompatActivity {
     private Button reservationsButton;
     private Button callButton;
     private Button logoutButton;
+    String username;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+
+        username = getIntent().getStringExtra("username"); // gets username that was passed through
 
         // bottom navigation buttons
         menuButton = findViewById(R.id.button_menu);
@@ -30,14 +34,17 @@ public class ContactActivity extends AppCompatActivity {
     private void setupButtonListeners() {
         // listener for menu
         menuButton.setOnClickListener(v -> {
-            startActivity(new Intent(ContactActivity.this, MenuListActivity.class));
-            finish();
+            Intent intent = new Intent(this, MenuListActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
+
         });
 
         // listener for reservation
         reservationsButton.setOnClickListener(v -> {
-            startActivity(new Intent(ContactActivity.this, MyReservationsActivity.class));
-            finish();
+            Intent intent = new Intent(this, MyReservationsActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
         });
 
         // listener for call

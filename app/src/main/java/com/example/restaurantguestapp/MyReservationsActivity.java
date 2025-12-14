@@ -15,11 +15,15 @@ import java.util.ArrayList;
 public class MyReservationsActivity extends AppCompatActivity {
 
     private Button logoutButton;
+    String username;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_reservations);
+
+        username = getIntent().getStringExtra("username"); // gets the username passed through
 
         logoutButton = findViewById(R.id.button_logout);
         setupNavigationAndActions();
@@ -28,9 +32,6 @@ public class MyReservationsActivity extends AppCompatActivity {
         fetchAndDisplayReservations();
 
         AppDatabaseHelper db = new AppDatabaseHelper(this);
-
-        // logged in user for now
-        String username = "oliver_hall";
 
         ArrayList<ReservationModel> list = db.getReservationsForUser(username);
 
@@ -49,18 +50,23 @@ public class MyReservationsActivity extends AppCompatActivity {
 
         // new reservation nav
         newReservationButton.setOnClickListener(v -> {
-            startActivity(new Intent(MyReservationsActivity.this, ReservationActivity.class));
+            Intent intent = new Intent(this, ReservationActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
         });
 
         // menu list nav
         menuNavButton.setOnClickListener(v -> {
-            startActivity(new Intent(MyReservationsActivity.this, MenuListActivity.class));
-            finish();
+            Intent intent = new Intent(this, MenuListActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
         });
 
         // contact screen nav
         callNavButton.setOnClickListener(v -> {
-            startActivity(new Intent(MyReservationsActivity.this, ContactActivity.class));
+            Intent intent = new Intent(this, ContactActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
         });
 
         logoutButton.setOnClickListener(v -> logoutUser());
