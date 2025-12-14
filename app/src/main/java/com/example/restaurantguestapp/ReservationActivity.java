@@ -84,19 +84,21 @@ public class ReservationActivity extends AppCompatActivity {
     }
 
     private void openTimePicker() {
-        final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
+        final String[] timeOptions = {
+                "10:00", "11:00", "12:00", "13:00",
+                "14:00", "15:00", "16:00", "17:00",
+                "18:00", "19:00", "20:00", "21:00",
+                "22:00"
+        };
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                (view, hourOfDay, minuteOfHour) -> {
-                    // time format
-                    String time = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minuteOfHour);
-                    selectedTimeText.setText(time);
-                }, hour, minute, true);
-
-        timePickerDialog.show();
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Select Time")
+                .setItems(timeOptions, (dialog, which) -> {
+                    selectedTimeText.setText(timeOptions[which]);
+                })
+                .show();
     }
+
 
     private void loadReservation() {
         ReservationModel r = db.getReservationById(editingReservationId);
