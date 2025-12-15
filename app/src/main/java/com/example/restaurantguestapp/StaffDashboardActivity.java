@@ -79,4 +79,9 @@ public class StaffDashboardActivity extends AppCompatActivity {
         newReservationsAmountText.setText(String.valueOf(count));
     }
 
+    private void loadMenuItemCount() {
+        int itemCount = db.getMenuItemCount();
+        totalMenuItemsAmountText.setText(String.valueOf(itemCount));
+    }
+
 }

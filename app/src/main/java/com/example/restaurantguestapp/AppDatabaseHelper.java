@@ -254,5 +254,19 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return item;
     }
+
+    public int getMenuItemCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM menu_items", null);
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return count;
+    }
+
 }
 
