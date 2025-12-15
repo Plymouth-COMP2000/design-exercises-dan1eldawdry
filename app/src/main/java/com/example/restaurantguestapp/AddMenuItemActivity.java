@@ -18,11 +18,32 @@ public class AddMenuItemActivity extends AppCompatActivity {
     private EditText itemDescriptionEditText;
     private Button addImageButton;
     private Button saveItemButton;
+    private boolean isEditMode = false;
+    private int menuItemId = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_menu_item);
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("menu_item_id")) {
+            isEditMode = true;
+            menuItemId = intent.getIntExtra("menu_item_id", -1);
+
+            AppDatabaseHelper db = new AppDatabaseHelper(this);
+            MenuItemModel item = db.getMenuItemById(menuItemId);
+
+            if (item != null) {
+                itemNameEditText.setText(item.getName());
+                itemPriceEditText.setText(item.getPrice());
+                itemDescriptionEditText.setText(item.getDescription());
+            }
+
+            saveItemButton.setText("UPDATE MENU ITEM");
+        }
+
 
         backButton = findViewById(R.id.button_back);
         itemNameEditText = findViewById(R.id.edit_text_item_name);
@@ -42,15 +63,11 @@ public class AddMenuItemActivity extends AppCompatActivity {
             });
         }
 
-        // add image form action
-        addImageButton.setOnClickListener(v -> {
-            // add code to pick from device gallery
-        });
-
         saveItemButton.setOnClickListener(v -> saveMenuItem());
     }
 
     private void saveMenuItem() {
+
         String name = itemNameEditText.getText().toString().trim();
         String price = itemPriceEditText.getText().toString().trim();
         String description = itemDescriptionEditText.getText().toString().trim();
@@ -60,12 +77,17 @@ public class AddMenuItemActivity extends AppCompatActivity {
             return;
         }
 
-        // placeholder for save logic
-        Toast.makeText(this, "Item saved, Name: " + name + ", Price: £" + price, Toast.LENGTH_LONG).show();
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
 
-        // back to main menu after saving
-        Intent intent = new Intent(this, ManageMenuActivity.class);
-        startActivity(intent);
+        if (isEditMode) {
+            db.updateMenuItem(menuItemId, name, price, description);
+            Toast.makeText(this, "Menu item updated", Toast.LENGTH_SHORT).show();
+        } else {
+            db.addMenuItem(name, price, description);
+            Toast.makeText(this, "Menu item added", Toast.LENGTH_SHORT).show();
+        }
+
         finish();
     }
+
 }

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppDatabaseHelper extends SQLiteOpenHelper {
     // database details
@@ -31,7 +32,16 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                 "status TEXT" +
                 ");";
 
+        // menu table
+        String createMenuTable = "CREATE TABLE menu_items (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "name TEXT," +
+                "description TEXT," +
+                "price REAL" +
+                ");";
+
         db.execSQL(createReservationsTable);
+        db.execSQL(createMenuTable);
     }
 
     @Override
@@ -177,5 +187,72 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return count;
     }
+
+    public void addMenuItem(String name, String description, String price) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("price", price);
+        db.insert("menu_items", null, values);
+    }
+
+    public void updateMenuItem(int id, String name, String description, String price) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("price", price);
+        db.update("menu_items", values, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public void deleteMenuItem(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("menu_items", "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public List<MenuItemModel> getAllMenuItems() {
+        List<MenuItemModel> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM menu_items", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(new MenuItemModel(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3)
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public MenuItemModel getMenuItemById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM menu_items WHERE id=?",
+                new String[]{String.valueOf(id)}
+        );
+
+        if (cursor.moveToFirst()) {
+            MenuItemModel item = new MenuItemModel(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3)
+            );
+            cursor.close();
+            return item;
+        }
+        cursor.close();
+        return null;
+    }
+
+
+
+
 }
 

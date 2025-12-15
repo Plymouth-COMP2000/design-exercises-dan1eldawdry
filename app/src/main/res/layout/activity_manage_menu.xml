@@ -81,14 +81,12 @@
                 android:textColor="#333333"
                 android:layout_marginBottom="12dp" />
 
-            <TextView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_menu_staff"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:gravity="center"
-                android:text="placeholder for menu item list in a recycler view"
-                android:background="#EEEEEE"
-                android:textColor="#666666"
-                android:textSize="16sp" />
+                android:layout_height="wrap_content"
+                android:padding="8dp" />
+
 
         </LinearLayout>
     </ScrollView>

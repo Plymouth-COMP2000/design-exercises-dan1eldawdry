@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 public class MenuListActivity extends AppCompatActivity {
 
@@ -26,6 +30,16 @@ public class MenuListActivity extends AppCompatActivity {
         reservationsButton = findViewById(R.id.button_reservations);
         callButton = findViewById(R.id.button_call);
         logoutButton = findViewById(R.id.button_logout);
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view_menu_guest);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<MenuItemModel> items = db.getAllMenuItems();
+
+        MenuAdapter adapter = new MenuAdapter(this, items, false);
+        recyclerView.setAdapter(adapter);
+
 
         setupButtonListeners();
     }

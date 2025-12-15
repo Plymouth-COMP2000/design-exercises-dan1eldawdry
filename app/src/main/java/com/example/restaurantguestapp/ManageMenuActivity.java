@@ -6,6 +6,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 public class ManageMenuActivity extends AppCompatActivity {
 
@@ -25,6 +29,16 @@ public class ManageMenuActivity extends AppCompatActivity {
         dashboardNavButton = findViewById(R.id.button_nav_dashboard);
         manageMenuNavButton = findViewById(R.id.button_nav_manage_menu);
         viewReservationsNavButton = findViewById(R.id.button_nav_view_reservations);
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view_menu_staff);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<MenuItemModel> items = db.getAllMenuItems();
+
+        MenuAdapter adapter = new MenuAdapter(this, items, true);
+        recyclerView.setAdapter(adapter);
+
 
         setupButtonListeners();
     }
