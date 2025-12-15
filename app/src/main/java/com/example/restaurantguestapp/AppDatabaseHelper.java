@@ -212,47 +212,47 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<MenuItemModel> getAllMenuItems() {
-        List<MenuItemModel> list = new ArrayList<>();
+        List<MenuItemModel> items = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
+
         Cursor cursor = db.rawQuery("SELECT * FROM menu_items", null);
 
         if (cursor.moveToFirst()) {
             do {
-                list.add(new MenuItemModel(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3)
-                ));
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow("description"));
+
+                items.add(new MenuItemModel(id, name, price, description));
             } while (cursor.moveToNext());
         }
+
         cursor.close();
-        return list;
+        return items;
     }
+
 
     public MenuItemModel getMenuItemById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
+
         Cursor cursor = db.rawQuery(
-                "SELECT * FROM menu_items WHERE id=?",
+                "SELECT * FROM menu_items WHERE id = ?",
                 new String[]{String.valueOf(id)}
         );
 
+        MenuItemModel item = null;
+
         if (cursor.moveToFirst()) {
-            MenuItemModel item = new MenuItemModel(
-                    cursor.getInt(0),
-                    cursor.getString(1),
-                    cursor.getString(2),
-                    cursor.getString(3)
-            );
-            cursor.close();
-            return item;
+            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
+            String description = cursor.getString(cursor.getColumnIndexOrThrow("description"));
+
+            item = new MenuItemModel(id, name, price, description);
         }
+
         cursor.close();
-        return null;
+        return item;
     }
-
-
-
-
 }
 
