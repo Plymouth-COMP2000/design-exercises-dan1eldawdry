@@ -16,7 +16,6 @@ public class AddMenuItemActivity extends AppCompatActivity {
     private EditText itemNameEditText;
     private EditText itemPriceEditText;
     private EditText itemDescriptionEditText;
-    private Button addImageButton;
     private Button saveItemButton;
     private boolean isEditMode = false;
     private int menuItemId = -1;
@@ -27,30 +26,22 @@ public class AddMenuItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_menu_item);
 
-        Intent intent = getIntent();
-        if (intent.hasExtra("menu_item_id")) {
-            isEditMode = true;
-            menuItemId = intent.getIntExtra("menu_item_id", -1);
-
-            AppDatabaseHelper db = new AppDatabaseHelper(this);
-            MenuItemModel item = db.getMenuItemById(menuItemId);
-
-            if (item != null) {
-                itemNameEditText.setText(item.getName());
-                itemPriceEditText.setText(item.getPrice());
-                itemDescriptionEditText.setText(item.getDescription());
-            }
-
-            saveItemButton.setText("UPDATE MENU ITEM");
-        }
-
-
         backButton = findViewById(R.id.button_back);
         itemNameEditText = findViewById(R.id.edit_text_item_name);
         itemPriceEditText = findViewById(R.id.edit_text_item_price);
         itemDescriptionEditText = findViewById(R.id.edit_text_item_description);
-        addImageButton = findViewById(R.id.button_add_image);
         saveItemButton = findViewById(R.id.button_save_item);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("menu_item_id")) {
+            menuItemId = intent.getIntExtra("menu_item_id", -1);
+
+            if (menuItemId != -1) {
+                isEditMode = true;
+                loadMenuItemForEdit(menuItemId);
+                saveItemButton.setText("UPDATE MENU ITEM");
+            }
+        }
 
         setupButtonListeners();
     }
@@ -67,7 +58,6 @@ public class AddMenuItemActivity extends AppCompatActivity {
     }
 
     private void saveMenuItem() {
-
         String name = itemNameEditText.getText().toString().trim();
         String price = itemPriceEditText.getText().toString().trim();
         String description = itemDescriptionEditText.getText().toString().trim();
@@ -87,7 +77,22 @@ public class AddMenuItemActivity extends AppCompatActivity {
             Toast.makeText(this, "Menu item added", Toast.LENGTH_SHORT).show();
         }
 
+        startActivity(new Intent(this, ManageMenuActivity.class));
         finish();
     }
+
+
+    private void loadMenuItemForEdit(int id) {
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        MenuItemModel item = db.getMenuItemById(id);
+
+        if (item != null) {
+            itemNameEditText.setText(item.getName());
+            itemPriceEditText.setText(String.valueOf(item.getPrice()));
+            itemDescriptionEditText.setText(item.getDescription());
+            saveItemButton.setText("UPDATE MENU ITEM");
+        }
+    }
+
 
 }

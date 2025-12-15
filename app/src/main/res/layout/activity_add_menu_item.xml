@@ -109,17 +109,6 @@
                 android:layout_marginBottom="24dp" />
 
             <Button
-                android:id="@+id/button_add_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="UPLOAD ITEM IMAGE"
-                android:backgroundTint="#66BB6A"
-                android:textColor="#FFFFFF"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:layout_marginBottom="32dp" />
-
-            <Button
                 android:id="@+id/button_save_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

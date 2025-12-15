@@ -49,7 +49,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
 
             holder.editButton.setOnClickListener(v -> {
                 Intent intent = new Intent(context, AddMenuItemActivity.class);
-                intent.putExtra("MENU_ID", item.getId());
+                intent.putExtra("menu_item_id", item.getId());
                 context.startActivity(intent);
             });
 
