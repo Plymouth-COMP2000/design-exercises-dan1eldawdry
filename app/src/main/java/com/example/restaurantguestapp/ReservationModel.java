@@ -8,17 +8,15 @@ public class ReservationModel {
     private String time;
     private int groupSize;
     private String specialRequests;
-    private String status;
 
     public ReservationModel(int id, String username, String date, String time,
-                            int groupSize, String specialRequests, String status) {
+                            int groupSize, String specialRequests) {
         this.id = id;
         this.username = username;
         this.date = date;
         this.time = time;
         this.groupSize = groupSize;
         this.specialRequests = specialRequests;
-        this.status = status;
     }
 
     public int getId() { return id; }
@@ -27,5 +25,4 @@ public class ReservationModel {
     public String getTime() { return time; }
     public int getGroupSize() { return groupSize; }
     public String getSpecialRequests() { return specialRequests; }
-    public String getStatus() { return status; }
 }

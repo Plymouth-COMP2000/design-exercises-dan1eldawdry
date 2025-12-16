@@ -28,8 +28,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                 "date TEXT, " +
                 "time TEXT, " +
                 "group_size INTEGER, " +
-                "special_requests TEXT, " +
-                "status TEXT" +
+                "special_requests TEXT" +
                 ");";
 
         // menu table
@@ -53,7 +52,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
 
     // add new reservation
     public boolean insertReservation(String username, String date, String time, int groupSize,
-                                     String specialRequests, String status) {
+                                     String specialRequests) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -63,7 +62,6 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         cv.put("time", time);
         cv.put("group_size", groupSize);
         cv.put("special_requests", specialRequests);
-        cv.put("status", status);
 
         long result = db.insert("reservations", null, cv);
         return result != -1; // true if success
@@ -85,8 +83,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getInt(4),
-                        cursor.getString(5),
-                        cursor.getString(6)
+                        cursor.getString(5)
                 );
                 list.add(r);
             } while (cursor.moveToNext());
@@ -111,8 +108,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getInt(4),
-                        cursor.getString(5),
-                        cursor.getString(6)
+                        cursor.getString(5)
                 );
                 list.add(r);
             } while (cursor.moveToNext());
@@ -162,7 +158,6 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(3),// time
                     cursor.getInt(4),   // group size
                     cursor.getString(5),// special requests
-                    cursor.getString(6) // status
             );
         }
 

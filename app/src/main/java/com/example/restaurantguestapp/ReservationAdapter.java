@@ -42,7 +42,6 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         holder.textTime.setText("Time: " + r.getTime());
         holder.textGroupSize.setText("Group Size: " + r.getGroupSize());
         holder.textSpecialRequests.setText("Requests: " + r.getSpecialRequests());
-        holder.textStatus.setText("Status: " + r.getStatus());
         holder.textUsername.setText("Guest: " + r.getUsername());
 
         // edit button
@@ -68,7 +67,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textUsername, textDate, textTime, textGroupSize, textSpecialRequests, textStatus;
+        TextView textUsername, textDate, textTime, textGroupSize, textSpecialRequests;
         Button buttonEdit, buttonCancel;
 
         public ViewHolder(@NonNull View itemView) {
@@ -79,7 +78,6 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             textTime = itemView.findViewById(R.id.text_time);
             textGroupSize = itemView.findViewById(R.id.text_group_size);
             textSpecialRequests = itemView.findViewById(R.id.text_special_requests);
-            textStatus = itemView.findViewById(R.id.text_status);
 
             buttonEdit = itemView.findViewById(R.id.button_edit);
             buttonCancel = itemView.findViewById(R.id.button_cancel);

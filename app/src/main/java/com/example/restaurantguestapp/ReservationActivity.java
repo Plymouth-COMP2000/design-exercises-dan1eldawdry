@@ -139,9 +139,6 @@ public class ReservationActivity extends AppCompatActivity {
             return;
         }
 
-        // username for now
-        String status = "Booked";
-
         boolean success;
 
         if (editingReservationId == -1) {
@@ -152,7 +149,6 @@ public class ReservationActivity extends AppCompatActivity {
                     time,
                     groupSize,
                     requests,
-                    status
             );
         } else {
             // if editing existing reservation. then it uses editReservation
@@ -163,7 +159,6 @@ public class ReservationActivity extends AppCompatActivity {
                     time,
                     groupSize,
                     requests,
-                    status
             );
             success = db.editReservation(model);
         }
