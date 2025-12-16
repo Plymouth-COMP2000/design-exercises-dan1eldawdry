@@ -148,7 +148,7 @@ public class ReservationActivity extends AppCompatActivity {
                     date,
                     time,
                     groupSize,
-                    requests,
+                    requests
             );
         } else {
             // if editing existing reservation. then it uses editReservation
@@ -158,7 +158,7 @@ public class ReservationActivity extends AppCompatActivity {
                     date,
                     time,
                     groupSize,
-                    requests,
+                    requests
             );
             success = db.editReservation(model);
         }
