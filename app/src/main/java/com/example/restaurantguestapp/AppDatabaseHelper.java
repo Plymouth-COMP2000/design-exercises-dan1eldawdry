@@ -157,7 +157,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(2),// date
                     cursor.getString(3),// time
                     cursor.getInt(4),   // group size
-                    cursor.getString(5),// special requests
+                    cursor.getString(5)// special requests
             );
         }
 
