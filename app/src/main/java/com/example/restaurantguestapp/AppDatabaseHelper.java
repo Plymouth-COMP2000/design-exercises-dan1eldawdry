@@ -47,13 +47,12 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                 ");";
 
         // notification table
-        String createNotificationsTable =
-                "CREATE TABLE " + TABLE_NOTIFICATIONS + " (" +
-                        COL_NOTIF_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        COL_NOTIF_USERNAME + " TEXT, " +
-                        COL_NOTIF_MESSAGE + " TEXT, " +
-                        COL_NOTIF_CREATED_AT + " INTEGER" +
-                        ")";
+        String createNotificationsTable = "CREATE TABLE " + TABLE_NOTIFICATIONS + " (" +
+                COL_NOTIF_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_NOTIF_USERNAME + " TEXT, " +
+                COL_NOTIF_MESSAGE + " TEXT, " +
+                COL_NOTIF_CREATED_AT + " INTEGER" +
+                ")";
 
         db.execSQL(createReservationsTable);
         db.execSQL(createMenuTable);
@@ -64,6 +63,8 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //deletion and recreation
         db.execSQL("DROP TABLE IF EXISTS reservations");
+        db.execSQL("DROP TABLE IF EXISTS menu_items");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
         onCreate(db);
     }
 

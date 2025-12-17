@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.os.Build;
+
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,6 +54,12 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             context.startActivity(intent);
             db.addGuestNotification(r.getUsername(),
                     "Your reservation for the " + r.getDate() + " at " + r.getTime() + " was updated");
+
+            NotificationHelper helper = new NotificationHelper(context);
+            helper.send(
+                    "Reservation Updated",
+                    "Your reservation for the " + r.getDate() + " at " + r.getTime() + " was updated"
+            );
         });
 
         // cancel button
@@ -59,6 +67,12 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             db.deleteReservation(r.getId());
             db.addGuestNotification(r.getUsername(),
                     "Your reservation for the " + r.getDate() + " at " + r.getTime() + " was cancelled");
+
+            NotificationHelper helper = new NotificationHelper(context);
+            helper.send(
+                    "Reservation Cancelled",
+                    "Your reservation for the " + r.getDate() + " at " + r.getTime() + " was cancelled"
+            );
             list.remove(position);
             notifyItemRemoved(position);
         });
