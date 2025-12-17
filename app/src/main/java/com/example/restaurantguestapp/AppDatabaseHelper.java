@@ -317,6 +317,49 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public void addStaffNotification(String message) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COL_NOTIF_USERNAME, "STAFF");
+        cv.put(COL_NOTIF_MESSAGE, message);
+        cv.put(COL_NOTIF_CREATED_AT, System.currentTimeMillis());
+
+        db.insert(TABLE_NOTIFICATIONS, null, cv);
+        db.close();
+    }
+
+    public List<NotificationModel> getStaffNotifications() {
+
+        List<NotificationModel> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM " + TABLE_NOTIFICATIONS +
+                        " WHERE " + COL_NOTIF_USERNAME + "=? " +
+                        " ORDER BY " + COL_NOTIF_CREATED_AT + " DESC",
+                new String[]{"STAFF"}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                NotificationModel n = new NotificationModel(
+                        cursor.getInt(0),      // id
+                        cursor.getString(1),   // knowing if its staff
+                        cursor.getString(2),   // message
+                        cursor.getLong(3)      // created_at
+                );
+                list.add(n);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+
+
 
 }
 

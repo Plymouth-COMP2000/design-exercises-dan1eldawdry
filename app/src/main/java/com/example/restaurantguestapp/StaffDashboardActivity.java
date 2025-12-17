@@ -6,6 +6,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 public class StaffDashboardActivity extends AppCompatActivity {
 
@@ -32,6 +36,16 @@ public class StaffDashboardActivity extends AppCompatActivity {
         totalMenuItemsAmountText = findViewById(R.id.text_total_menu_items_amount);
         db = new AppDatabaseHelper(this);
         setupButtonListeners();
+
+        RecyclerView recycler = findViewById(R.id.recycler_staff_notifications);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<NotificationModel> notifications = db.getStaffNotifications();
+
+        NotificationAdapter adapter = new NotificationAdapter(this, notifications);
+        recycler.setAdapter(adapter);
+
 
         loadReservationCount();
         loadMenuItemCount();

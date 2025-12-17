@@ -150,6 +150,19 @@ public class ReservationActivity extends AppCompatActivity {
                     groupSize,
                     requests
             );
+
+            if (success) {
+
+                String message = "New reservation made by " + username +
+                        " for " + date + " at " + time;
+
+                // stores notifictaions for staff
+                db.addStaffNotification(message);
+
+                // actual andoird notification
+                NotificationHelper helper = new NotificationHelper(this);
+                helper.send("New Reservation", message);
+            }
         } else {
             // if editing existing reservation. then it uses editReservation
             ReservationModel model = new ReservationModel(
