@@ -13,6 +13,13 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
     // database details
     private static final String DATABASE_NAME = "restaurant.db";
     private static final int DATABASE_VERSION = 1;
+    // Notifications table
+    public static final String TABLE_NOTIFICATIONS = "guest_notifications";
+    public static final String COL_NOTIF_ID = "id";
+    public static final String COL_NOTIF_USERNAME = "username";
+    public static final String COL_NOTIF_MESSAGE = "message";
+    public static final String COL_NOTIF_CREATED_AT = "created_at";
+
 
     public AppDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,8 +46,18 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                 "price REAL" +
                 ");";
 
+        // notification table
+        String createNotificationsTable =
+                "CREATE TABLE " + TABLE_NOTIFICATIONS + " (" +
+                        COL_NOTIF_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        COL_NOTIF_USERNAME + " TEXT, " +
+                        COL_NOTIF_MESSAGE + " TEXT, " +
+                        COL_NOTIF_CREATED_AT + " INTEGER" +
+                        ")";
+
         db.execSQL(createReservationsTable);
         db.execSQL(createMenuTable);
+        db.execSQL(createNotificationsTable);
     }
 
     @Override
@@ -262,6 +279,43 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
+    public void addGuestNotification(String username, String message) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_NOTIF_USERNAME, username);
+        cv.put(COL_NOTIF_MESSAGE, message);
+        cv.put(COL_NOTIF_CREATED_AT, System.currentTimeMillis());
+        db.insert(TABLE_NOTIFICATIONS, null, cv);
+        db.close();
+    }
+
+    public List<NotificationModel> getGuestNotifications(String username) {
+        List<NotificationModel> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_NOTIFICATIONS +
+                " WHERE " + COL_NOTIF_USERNAME + "=? " +
+                " ORDER BY " + COL_NOTIF_CREATED_AT + " DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_NOTIF_ID));
+                String u = cursor.getString(cursor.getColumnIndexOrThrow(COL_NOTIF_USERNAME));
+                String msg = cursor.getString(cursor.getColumnIndexOrThrow(COL_NOTIF_MESSAGE));
+                long createdAt = cursor.getLong(cursor.getColumnIndexOrThrow(COL_NOTIF_CREATED_AT));
+
+                list.add(new NotificationModel(id, u, msg, createdAt));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return list;
+    }
+
 
 }
 

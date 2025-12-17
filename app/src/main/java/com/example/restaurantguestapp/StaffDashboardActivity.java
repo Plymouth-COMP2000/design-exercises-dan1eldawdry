@@ -34,6 +34,7 @@ public class StaffDashboardActivity extends AppCompatActivity {
         setupButtonListeners();
 
         loadReservationCount();
+        loadMenuItemCount();
     }
 
     // makes sure it updates when i return to the dashboard

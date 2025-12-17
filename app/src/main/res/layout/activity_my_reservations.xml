@@ -64,9 +64,41 @@
                 android:id="@+id/reservation_status_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"/>
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Reservation Notifications"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/text_no_guest_notifications"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No notifications yet."
+                        android:textColor="#999999"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:visibility="gone"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_guest_notifications"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
             <Button
                 android:id="@+id/button_new_reservation"
                 android:layout_width="match_parent"

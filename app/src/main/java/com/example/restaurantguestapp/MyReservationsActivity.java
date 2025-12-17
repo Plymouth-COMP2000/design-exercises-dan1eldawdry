@@ -2,6 +2,7 @@ package com.example.restaurantguestapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,11 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MyReservationsActivity extends AppCompatActivity {
 
     private Button logoutButton;
     String username;
+    private RecyclerView recyclerViewNotifications;
+    private NotificationAdapter notificationAdapter;
+    private TextView textNoNotifications;
+
 
 
     @Override
@@ -25,6 +31,12 @@ public class MyReservationsActivity extends AppCompatActivity {
 
         username = getIntent().getStringExtra("username"); // gets the username passed through
 
+        recyclerViewNotifications = findViewById(R.id.recycler_view_guest_notifications);
+        textNoNotifications = findViewById(R.id.text_no_guest_notifications);
+
+        recyclerViewNotifications.setLayoutManager(new LinearLayoutManager(this));
+
+
         logoutButton = findViewById(R.id.button_logout);
         setupNavigationAndActions();
 
@@ -32,6 +44,16 @@ public class MyReservationsActivity extends AppCompatActivity {
         fetchAndDisplayReservations();
 
         AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<NotificationModel> notifications = db.getGuestNotifications(username);
+
+        notificationAdapter = new NotificationAdapter(this, notifications);
+        recyclerViewNotifications.setAdapter(notificationAdapter);
+
+        if (notifications == null || notifications.isEmpty()) {
+            textNoNotifications.setVisibility(View.VISIBLE);
+        } else {
+            textNoNotifications.setVisibility(View.GONE);
+        }
 
         ArrayList<ReservationModel> list = db.getReservationsForUser(username);
 
@@ -42,6 +64,26 @@ public class MyReservationsActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshGuestNotifications();
+    }
+
+    private void refreshGuestNotifications() {
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<NotificationModel> notifications = db.getGuestNotifications(username);
+
+        notificationAdapter.setNotifications(notifications);
+
+        if (notifications == null || notifications.isEmpty()) {
+            textNoNotifications.setVisibility(View.VISIBLE);
+        } else {
+            textNoNotifications.setVisibility(View.GONE);
+        }
+    }
+
 
     private void setupNavigationAndActions() {
         Button newReservationButton = findViewById(R.id.button_new_reservation);

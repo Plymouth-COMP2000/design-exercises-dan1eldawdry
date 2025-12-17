@@ -50,11 +50,15 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             intent.putExtra("reservation_id", r.getId());   // tells activity to load and edit
             intent.putExtra("username", r.getUsername()); // edits according to the correct username
             context.startActivity(intent);
+            db.addGuestNotification(r.getUsername(),
+                    "Your reservation for the " + r.getDate() + " at " + r.getTime() + " was updated");
         });
 
         // cancel button
         holder.buttonCancel.setOnClickListener(v -> {
             db.deleteReservation(r.getId());
+            db.addGuestNotification(r.getUsername(),
+                    "Your reservation for the " + r.getDate() + " at " + r.getTime() + " was cancelled");
             list.remove(position);
             notifyItemRemoved(position);
         });

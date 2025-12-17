@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text_notification_message"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="#E8F5E9"
+    android:textColor="#333333"
+    android:textSize="14sp"
+    android:textStyle="italic"
+    android:layout_marginBottom="8dp"/>
