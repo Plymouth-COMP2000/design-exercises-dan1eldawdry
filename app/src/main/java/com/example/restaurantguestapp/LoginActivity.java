@@ -9,27 +9,45 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // UI elements
-    private EditText loginEmail;
-    private EditText loginPassword;
+    // input fields
+    private EditText emailInput;
+    private EditText passwordInput;
+
     private Button loginButton;
     private Button staffLoginButton;
 
-    private static final String STUDENT_ID = "10911123";
+    private static final String STUDENT_ID = "10911123"; // student id for API access
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        requestNotificationPermission();
+
+        // link ui and java
+        emailInput = findViewById(R.id.emailInput);
+        passwordInput = findViewById(R.id.passwordInput);
+        loginButton = findViewById(R.id.loginButton);
+        staffLoginButton = findViewById(R.id.staffLoginButton);
+
+        // button listeners
+        loginButton.setOnClickListener(v -> attemptLogin());
+        staffLoginButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, StaffLoginActivity.class));
+        });
+    }
+
+    // asks permission to send notification on this first screen
+    private void requestNotificationPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -43,43 +61,31 @@ public class LoginActivity extends AppCompatActivity {
                 );
             }
         }
-
-
-        loginEmail = findViewById(R.id.editText_email);
-        loginPassword = findViewById(R.id.editText_password);
-        loginButton = findViewById(R.id.button_login_guest);
-        staffLoginButton = findViewById(R.id.button_staff_login);
-
-        // listener
-        loginButton.setOnClickListener(v -> handleLoginAttempt());
-        staffLoginButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, StaffLoginActivity.class));
-        });
     }
 
     // starts login process by calling UserService to get users
-    private void handleLoginAttempt() {
-        // grabs and validates the input
-        String enteredEmail = loginEmail.getText().toString().trim();
-        String enteredPassword = loginPassword.getText().toString().trim();
+    private void attemptLogin() {
 
-        if (enteredEmail.isEmpty() || enteredPassword.isEmpty()) {
-            Toast.makeText(this, "enter both email and password.", Toast.LENGTH_SHORT).show();
+        // grabs and validates the input
+        String email = emailInput.getText().toString().trim();
+        String password = passwordInput.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "enter both email and password", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // just disable button to make UX cleaner
+        // disalbed button to stop multiple taps
         loginButton.setEnabled(false);
 
-        // Volley call
+        // get users from API with a volley call
         UserService.readAllUsers(this, STUDENT_ID, new UserListCallback() {
 
             // success
             @Override
             public void onSuccess(List<User> userList) {
                 loginButton.setEnabled(true);
-                // moves to local authentication
-                localAuthentication(enteredEmail, enteredPassword, userList);
+                authenticateUser(email, password, userList);
             }
 
             // fail
@@ -91,20 +97,21 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // local cred check and role based access check
-    private void localAuthentication(String email, String password, List<User> userList) {
+    // local cred check and moves user on based on role
+    private void authenticateUser(String email, String password, List<User> users) {
 
-        for (User user : userList) {
+        for (User user : users) {
             // check creds match
             if (user.email.equals(email) && user.password.equals(password)) {
 
-                // check role
-                String userRole = user.usertype;
-                String username = user.username; // for welcocme test
+                String role = user.usertype;
+                String username = user.username;
 
-                if (userRole.equalsIgnoreCase("guest")) {
-                    // guest route
+                // guest access
+                if (role.equalsIgnoreCase("guest")) {
+
                     Toast.makeText(this, "Welcome " + username, Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(LoginActivity.this, MenuListActivity.class);
                     intent.putExtra("username", username); // passes the username through
                     startActivity(intent);
@@ -112,13 +119,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 } else {
                     // if login work but staff
-                    Toast.makeText(this, "You are a staff user. Move over to Staff Login", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "you are a staff user move over to Staff Login", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
         }
 
         // if loop finishes without match
-        Toast.makeText(this, "Login Failed: Invalid username or password.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "login failed: invalid email or password", Toast.LENGTH_LONG).show();
     }
 }

@@ -12,55 +12,59 @@ import java.util.List;
 
 public class StaffLoginActivity extends AppCompatActivity {
 
-    private EditText staffLoginEmail;
-    private EditText staffLoginPassword;
+    // input fields
+    private EditText emailInput;
+    private EditText passwordInput;
+
     private Button backButton;
     private Button loginButton;
 
-    // using my student ID to fetch users
-    private static final String STUDENT_ID = "10911123";
+    private static final String STUDENT_ID = "10911123"; // student id for API access
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_login);
 
-        staffLoginEmail = findViewById(R.id.editText_staff_id);
-        staffLoginPassword = findViewById(R.id.editText_staff_password);
+        // link ui and java
+        emailInput = findViewById(R.id.editText_staff_id);
+        passwordInput = findViewById(R.id.editText_staff_password);
         backButton = findViewById(R.id.button_back_to_guest_login);
         loginButton = findViewById(R.id.button_staff_login_submit);
 
+        // button listeners
         backButton.setOnClickListener(v -> {
             finish();
         });
-
-        loginButton.setOnClickListener(v -> handleLoginAttempt());
+        loginButton.setOnClickListener(v -> attemptLogin());
     }
 
-    // staff login part
-    private void handleLoginAttempt() {
-        String enteredEmail = staffLoginEmail.getText().toString().trim();
-        String enteredPassword = staffLoginPassword.getText().toString().trim();
+    // starts login process by calling UserService to get users
+    private void attemptLogin() {
 
-        if (enteredEmail.isEmpty() || enteredPassword.isEmpty()) {
-            Toast.makeText(this, "Enter both email and password.", Toast.LENGTH_SHORT).show();
+        // grabs and validates the input
+        String email = emailInput.getText().toString().trim();
+        String password = passwordInput.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "enter both email and password.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // disable button for better UX
+        // disalbed button to stop multiple taps
         loginButton.setEnabled(false);
 
-        // volley call
+        // get users from API with a volley call
         UserService.readAllUsers(this, STUDENT_ID, new UserListCallback() {
 
-            // local auth
+            // success
             @Override
             public void onSuccess(List<User> userList) {
                 loginButton.setEnabled(true);
-                localAuthentication(enteredEmail, enteredPassword, userList);
+                authenticateStaff(email, password, userList);
             }
 
-            // failure
+            // fail
             @Override
             public void onFailure(String errorMessage) {
                 loginButton.setEnabled(true);
@@ -69,31 +73,35 @@ public class StaffLoginActivity extends AppCompatActivity {
         });
     }
 
-    private void localAuthentication(String email, String password, List<User> userList) {
+    // local cred check and moves user on based on role for staff
+    private void authenticateStaff(String email, String password, List<User> users) {
 
-        for (User user : userList) {
-            // cehck if creds match
+        for (User user : users) {
+            // check creds match
             if (user.email.equals(email) && user.password.equals(password)) {
 
-                // check role
-                String userRole = user.usertype;
+                String role = user.usertype;
                 String username = user.username;
 
-                if (userRole.equalsIgnoreCase("staff")) {
-                    Toast.makeText(this, "Welcome Staff " + username, Toast.LENGTH_SHORT).show();
-                    Intent staffDashboardIntent = new Intent(this, StaffDashboardActivity.class);
-                    staffDashboardIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(staffDashboardIntent);
+                // staff access
+                if (role.equalsIgnoreCase("staff")) {
+
+                    Toast.makeText(this, "Welcome " + username, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(this, StaffDashboardActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear back stack
+                    startActivity(intent);
                     return;
+
                 } else {
-                    // if login user is a guest
-                    Toast.makeText(this, "You are a Guest user. Move over to Guest Login.", Toast.LENGTH_LONG).show();
+                    // if login work but guest
+                    Toast.makeText(this, "you are a guest user move over to Guest Login", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
         }
 
-        // loop finishes without a match
-        Toast.makeText(this, "Staff Login Failed: Invalid email or password.", Toast.LENGTH_LONG).show();
+        // if loop finishes without match
+        Toast.makeText(this, "login failed: invalid username or password", Toast.LENGTH_LONG).show();
     }
 }
