@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/contactRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     tools:context=".ContactActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/top_bar_layout"
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:background="#F5F5F5"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/text_contact_title"
+            android:id="@+id/screenTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Contact Us"
@@ -31,13 +30,13 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <Button
-            android:id="@+id/button_logout"
+            android:id="@+id/logoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LOGOUT"
+            android:text="Logout"
             android:textSize="12sp"
-            android:background="@android:color/transparent"
             android:textColor="#C62828"
+            android:background="@android:color/transparent"
             android:padding="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -46,28 +45,32 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
+        android:id="@+id/contentScroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/top_bar_layout"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_bar"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:id="@+id/contactContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/helpText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="We are here to help with reservations, experience and any questions you may have. Use the following methods to contact us"
+                android:text="We are here to help with reservations, experience and any questions you may have. Use the following methods to contact us."
                 android:textSize="16sp"
                 android:textColor="#333333"
                 android:layout_marginBottom="32dp" />
 
             <TextView
+                android:id="@+id/callTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Call Us"
@@ -77,6 +80,7 @@
                 android:layout_marginBottom="8dp" />
 
             <TextView
+                android:id="@+id/callInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Our lines are open from 10:00 AM to 10:00 PM daily"
@@ -84,16 +88,18 @@
                 android:textColor="#666666" />
 
             <TextView
+                android:id="@+id/phoneNumberText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="[Number Here]"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#007BFF"
+                android:textColor="#666666"
                 android:paddingTop="4dp"
                 android:layout_marginBottom="32dp" />
 
             <TextView
+                android:id="@+id/emailTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Email Support"
@@ -103,6 +109,7 @@
                 android:layout_marginBottom="8dp" />
 
             <TextView
+                android:id="@+id/emailInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="For general inquiries or feedback"
@@ -110,16 +117,18 @@
                 android:textColor="#666666" />
 
             <TextView
+                android:id="@+id/emailAddressText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="[Email Here]"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#007BFF"
+                android:textColor="#666666"
                 android:paddingTop="4dp"
                 android:layout_marginBottom="32dp" />
 
             <TextView
+                android:id="@+id/reservationHelpTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reservation Help"
@@ -129,9 +138,10 @@
                 android:layout_marginBottom="8dp" />
 
             <TextView
+                android:id="@+id/reservationHelpText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="To change or cancel a booking use the Reservations Screen. For any urgent issues contact the email above."
+                android:text="To change or cancel a booking use the Reservations screen. For urgent issues, contact the email above."
                 android:textSize="16sp"
                 android:textColor="#333333"
                 android:layout_marginBottom="16dp" />
@@ -139,9 +149,8 @@
         </LinearLayout>
     </ScrollView>
 
-
     <LinearLayout
-        android:id="@+id/bottom_navigation_bar"
+        android:id="@+id/bottomNavBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -152,32 +161,32 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <Button
-            android:id="@+id/button_menu"
+            android:id="@+id/menuButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="MENU"
+            android:text="Menu"
             android:textColor="#666666"
             android:background="@android:color/transparent" />
 
         <Button
-            android:id="@+id/button_reservations"
+            android:id="@+id/reservationsButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="RESERVATIONS"
+            android:text="Reservations"
             android:textColor="#666666"
             android:background="@android:color/transparent" />
 
         <Button
-            android:id="@+id/button_call"
+            android:id="@+id/callButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="CALL"
+            android:text="Call"
             android:textColor="#2E7D32"
-            android:background="@android:color/transparent"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@android:color/transparent" />
 
     </LinearLayout>
 

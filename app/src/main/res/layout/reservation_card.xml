@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,78 +9,80 @@
     card_view:cardElevation="6dp">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/text_date"
+            android:id="@+id/reservationDateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Date"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#2E7D32"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textColor="#2E7D32" />
 
         <TextView
-            android:id="@+id/text_username"
+            android:id="@+id/guestNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Guest: username"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textColor="#333333" />
 
         <TextView
-            android:id="@+id/text_time"
+            android:id="@+id/reservationTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Time"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/text_group_size"
+            android:id="@+id/groupSizeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Group Size"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/text_special_requests"
-            android:text="Special Requests"
-            android:textSize="14sp"
+            android:id="@+id/specialRequestsText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Special Requests"
+            android:textSize="14sp" />
 
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:gravity="end"
         android:layout_marginTop="12dp">
 
         <Button
-            android:id="@+id/button_edit"
+            android:id="@+id/editReservationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="EDIT"
+            android:text="Edit"
             android:textSize="12sp"
             android:padding="6dp"
             android:backgroundTint="#66BB6A"
-            android:textColor="#FFFFFF"/>
+            android:textColor="#FFFFFF" />
 
         <Button
-            android:id="@+id/button_cancel"
+            android:id="@+id/cancelReservationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CANCEL"
+            android:text="Cancel"
             android:textSize="12sp"
             android:padding="6dp"
             android:backgroundTint="#C62828"
             android:textColor="#FFFFFF"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
