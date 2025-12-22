@@ -1,27 +1,34 @@
 package com.example.restaurantguestapp;
 
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.util.Calendar;
 import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 
 public class ReservationActivity extends AppCompatActivity {
 
-    // UI Components
-    private TextView selectedDateText;
-    private TextView selectedTimeText;
-    private EditText groupSizeEditText;
-    private EditText specialRequestsEditText;
-    private AppDatabaseHelper db;
-    private int editingReservationId = -1;
-    private String username;
+    // form
+    private TextView dateText;
+    private TextView timeText;
+    private EditText groupSizeInput;
+    private EditText requestsInput;
+    private Button backButton;
+    private Button selectDateButton;
+    private Button confirmButton;
+
+    private AppDatabaseHelper db; // database helper
+
+    private int reservationId = -1; // checks if they are editing an existing reservation
+
+    private String username; // stores current users username
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,57 +39,57 @@ public class ReservationActivity extends AppCompatActivity {
 
         db = new AppDatabaseHelper(this);
 
-        initializeUI();
+        // link ui and java
+        dateText = findViewById(R.id.selectedDateText);
+        timeText = findViewById(R.id.selectedTimeText);
+        groupSizeInput = findViewById(R.id.groupSizeInput);
+        requestsInput = findViewById(R.id.requestsInput);
+        backButton = findViewById(R.id.backButton);
+        selectDateButton = findViewById(R.id.changeDateButton);
+        confirmButton = findViewById(R.id.confirmBookingButton);
 
         // checks if its editing
-        editingReservationId = getIntent().getIntExtra("reservation_id", -1);
-        if (editingReservationId != -1) {
+        reservationId = getIntent().getIntExtra("reservation_id", -1);
+        if (reservationId != -1) {
             loadReservation(); // fill fields for editing
         }
 
-        setupReservationFormActions();
+        setupButtons();
     }
 
-    private void initializeUI() {
-        selectedDateText = findViewById(R.id.text_selected_date);
-        selectedTimeText = findViewById(R.id.text_selected_time);
-        groupSizeEditText = findViewById(R.id.editText_group_size);
-        specialRequestsEditText = findViewById(R.id.editText_special_requests);
+    // click listeners for all buttons on screen
+    private void setupButtons() {
+        backButton.setOnClickListener(v -> finish()); // go back a screen
+        selectDateButton.setOnClickListener(v -> openDatePicker()); // opens the date picker
+        timeText.setOnClickListener(v -> openTimePicker()); // opens the time picker
+        confirmButton.setOnClickListener(v -> saveReservation()); // always go through saveReservation()
     }
 
-    private void setupReservationFormActions() {
-        Button backButton = findViewById(R.id.button_back);
-        Button selectDateButton = findViewById(R.id.button_select_date);
-        Button confirmBookingButton = findViewById(R.id.button_confirm_booking);
-
-        backButton.setOnClickListener(v -> finish());
-
-        selectDateButton.setOnClickListener(v -> openDatePicker());
-
-        selectedTimeText.setOnClickListener(v -> openTimePicker());
-
-        // always go through saveReservation()
-        confirmBookingButton.setOnClickListener(v -> saveReservation());
-    }
-
+    // opens a date picker widget and updates the date
     private void openDatePicker() {
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
+        Calendar calendar = Calendar.getInstance();
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, year1, monthOfYear, dayOfMonth) -> {
-                    // update textview with selected date
-                    String date = String.format(Locale.getDefault(), "%d/%d/%d", dayOfMonth, monthOfYear + 1, year1);
-                    selectedDateText.setText(date);
-                }, year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            String date = String.format(
+                    Locale.getDefault(),
+                    "%d/%d/%d",
+                    dayOfMonth,
+                    month + 1,
+                    year
+            );
+            dateText.setText(date);
+        },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
 
-        // restrict selection to today or in future
+        // prevents selecting past dates
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
+    // opens time picker selection
     private void openTimePicker() {
         final String[] timeOptions = {
                 "10:00", "11:00", "12:00", "13:00",
@@ -91,59 +98,62 @@ public class ReservationActivity extends AppCompatActivity {
                 "22:00"
         };
 
-        new androidx.appcompat.app.AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle("Select Time")
                 .setItems(timeOptions, (dialog, which) -> {
-                    selectedTimeText.setText(timeOptions[which]);
+                    timeText.setText(timeOptions[which]);
                 })
                 .show();
     }
 
-
+    // loads data into reservation form when editing
     private void loadReservation() {
-        ReservationModel r = db.getReservationById(editingReservationId);
-        if (r == null) return;
+        ReservationModel reservation = db.getReservationById(reservationId);
+        if (reservation == null) return;
 
         // fill fields
-        selectedDateText.setText(r.getDate());
-        selectedTimeText.setText(r.getTime());
-        groupSizeEditText.setText(String.valueOf(r.getGroupSize()));
-        specialRequestsEditText.setText(r.getSpecialRequests());
+        dateText.setText(reservation.getDate());
+        timeText.setText(reservation.getTime());
+        groupSizeInput.setText(String.valueOf(reservation.getGroupSize()));
+        requestsInput.setText(reservation.getSpecialRequests());
     }
 
+    // checks the input and saves it
     private void saveReservation() {
-        String date = selectedDateText.getText().toString().trim();
-        String time = selectedTimeText.getText().toString().trim();
-        String groupSizeStr = groupSizeEditText.getText().toString().trim();
-        String requests = specialRequestsEditText.getText().toString().trim();
+        String date = dateText.getText().toString().trim();
+        String time = timeText.getText().toString().trim();
+        String groupSizeText = groupSizeInput.getText().toString().trim();
+        String requests = requestsInput.getText().toString().trim();
 
-        // simple validation
-        if (date.equals("Select Date") || date.isEmpty()) {
-            Toast.makeText(this, "Please select a reservation date.", Toast.LENGTH_SHORT).show();
+        // input validation
+        if (date.isEmpty() || date.equals("Select Date")) {
+            Toast.makeText(this, "please pick a reservation date", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (time.equals("Select Time") || time.isEmpty()) {
-            Toast.makeText(this, "Please select a reservation time.", Toast.LENGTH_SHORT).show();
+
+        if (time.isEmpty() || time.equals("Select Time")) {
+            Toast.makeText(this, "please pick a reservation time", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (groupSizeStr.isEmpty()) {
-            Toast.makeText(this, "Please enter the group size.", Toast.LENGTH_SHORT).show();
+
+        if (groupSizeText.isEmpty()) {
+            Toast.makeText(this, "please put the group size", Toast.LENGTH_SHORT).show();
             return;
         }
 
         int groupSize;
         try {
-            groupSize = Integer.parseInt(groupSizeStr);
+            groupSize = Integer.parseInt(groupSizeText);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Group size must be a number.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "group size must be a number", Toast.LENGTH_SHORT).show();
             return;
         }
 
         boolean success;
 
-        if (editingReservationId == -1) {
-            // making a new reservation uses insertReservation
-            success = db.insertReservation(
+        if (reservationId == -1) {
+            // making a new reservation uses addReservation
+            success = db.addReservation(
                     username,
                     date,
                     time,
@@ -152,8 +162,7 @@ public class ReservationActivity extends AppCompatActivity {
             );
 
             if (success) {
-
-                String message = "New reservation made by " + username +
+                String message = "new reservation made by " + username +
                         " for " + date + " at " + time;
 
                 // stores notifictaions for staff
@@ -163,23 +172,25 @@ public class ReservationActivity extends AppCompatActivity {
                 NotificationHelper helper = new NotificationHelper(this);
                 helper.send("New Reservation", message);
             }
+
         } else {
-            // if editing existing reservation. then it uses editReservation
-            ReservationModel model = new ReservationModel(
-                    editingReservationId,
+            // if editing existing reservation. then it uses updateReservation
+            ReservationModel updatedReservation = new ReservationModel(
+                    reservationId,
                     username,
                     date,
                     time,
                     groupSize,
                     requests
             );
-            success = db.editReservation(model);
+            success = db.updateReservation(updatedReservation);
         }
+
         if (success) {
-            Toast.makeText(this, "Reservation saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "reservation saved", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            Toast.makeText(this, "Error saving reservation", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "error saving reservation", Toast.LENGTH_SHORT).show();
         }
     }
 }

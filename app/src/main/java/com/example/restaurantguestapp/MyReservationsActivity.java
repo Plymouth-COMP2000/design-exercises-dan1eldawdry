@@ -16,13 +16,18 @@ import java.util.List;
 
 public class MyReservationsActivity extends AppCompatActivity {
 
+    // navigation buttons
+    private Button callButton;
+    private Button menuButton;
     private Button logoutButton;
-    String username;
-    private RecyclerView recyclerViewNotifications;
+    private Button newReservationButton;
+
+    private String username; // stores current users username
+
+    // notifications ui
+    private RecyclerView notificationRecyclerView;
     private NotificationAdapter notificationAdapter;
-    private TextView textNoNotifications;
-
-
+    private TextView noNotificationsText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,102 +36,104 @@ public class MyReservationsActivity extends AppCompatActivity {
 
         username = getIntent().getStringExtra("username"); // gets the username passed through
 
-        recyclerViewNotifications = findViewById(R.id.recycler_view_guest_notifications);
-        textNoNotifications = findViewById(R.id.text_no_guest_notifications);
+        // link notification views
+        notificationRecyclerView = findViewById(R.id.notificationsRecyclerView);
+        noNotificationsText = findViewById(R.id.noNotificationsText);
+        notificationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        recyclerViewNotifications.setLayoutManager(new LinearLayoutManager(this));
+        // link ui and java
+        logoutButton = findViewById(R.id.logoutButton);
+        menuButton = findViewById(R.id.menuButton);
+        callButton = findViewById(R.id.callButton);
+        newReservationButton = findViewById(R.id.newReservationButton);
 
-
-        logoutButton = findViewById(R.id.button_logout);
-        setupNavigationAndActions();
-
-        // load users existing rservations when screen opens
-        fetchAndDisplayReservations();
-
-        AppDatabaseHelper db = new AppDatabaseHelper(this);
-        List<NotificationModel> notifications = db.getGuestNotifications(username);
-
-        notificationAdapter = new NotificationAdapter(this, notifications);
-        recyclerViewNotifications.setAdapter(notificationAdapter);
-
-        if (notifications == null || notifications.isEmpty()) {
-            textNoNotifications.setVisibility(View.VISIBLE);
-        } else {
-            textNoNotifications.setVisibility(View.GONE);
-        }
-
-        ArrayList<ReservationModel> list = db.getReservationsForUser(username);
-
-        ReservationAdapter adapter = new ReservationAdapter(this, list);
-
-        RecyclerView rv = findViewById(R.id.recycler_view_reservations);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-
+        setupButtons();
+        setupNotifications();
+        setupReservations();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshGuestNotifications();
+        refreshNotifications(); // refresh notifications when returns to the screen
     }
 
-    private void refreshGuestNotifications() {
+    // loads and displays guest notifications
+    private void setupNotifications() {
+
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<NotificationModel> notifications = db.getGuestNotifications(username);
+
+        notificationAdapter = new NotificationAdapter(this, notifications);
+        notificationRecyclerView.setAdapter(notificationAdapter);
+
+        updateNotificationVisibility(notifications);
+    }
+
+    // reloads notifications when activity resumes
+    private void refreshNotifications() {
         AppDatabaseHelper db = new AppDatabaseHelper(this);
         List<NotificationModel> notifications = db.getGuestNotifications(username);
 
         notificationAdapter.setNotifications(notifications);
+        updateNotificationVisibility(notifications);
+    }
+
+    // shows or hide the no notifications message
+    private void updateNotificationVisibility(List<NotificationModel> notifications) {
 
         if (notifications == null || notifications.isEmpty()) {
-            textNoNotifications.setVisibility(View.VISIBLE);
+            noNotificationsText.setVisibility(View.VISIBLE);
         } else {
-            textNoNotifications.setVisibility(View.GONE);
+            noNotificationsText.setVisibility(View.GONE);
         }
     }
 
+    // loads and displays guest reservations
+    private void setupReservations() {
 
-    private void setupNavigationAndActions() {
-        Button newReservationButton = findViewById(R.id.button_new_reservation);
-        Button menuNavButton = findViewById(R.id.button_menu_nav);
-        Button callNavButton = findViewById(R.id.button_call_nav);
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        ArrayList<ReservationModel> reservations = db.getReservationsForUser(username);
 
-        // new reservation nav
+        ReservationAdapter adapter = new ReservationAdapter(this, reservations);
+
+        RecyclerView reservationRecyclerView = findViewById(R.id.reservationsRecyclerView);
+
+        reservationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        reservationRecyclerView.setAdapter(adapter);
+    }
+
+    // click listeners for all buttons on screen
+    private void setupButtons() {
+
+        // opens new reservations screen
         newReservationButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, ReservationActivity.class);
             intent.putExtra("username", username);
             startActivity(intent);
         });
 
-        // menu list nav
-        menuNavButton.setOnClickListener(v -> {
+        // opens menu list screen
+        menuButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, MenuListActivity.class);
             intent.putExtra("username", username);
             startActivity(intent);
         });
 
-        // contact screen nav
-        callNavButton.setOnClickListener(v -> {
+        // opens call screen
+        callButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, ContactActivity.class);
             intent.putExtra("username", username);
             startActivity(intent);
         });
 
+        // log user out
         logoutButton.setOnClickListener(v -> logoutUser());
     }
 
-    // placeholder method for getting the users reservations
-    private void fetchAndDisplayReservations() {
-        // where I connect to my database like appdatabasehelper
-
-        // get reservation records and update list
-        Toast.makeText(this, "reservations fetched and displayed", Toast.LENGTH_SHORT).show();
-    }
-
-    // logout method
     private void logoutUser() {
         Intent intent = new Intent(this, LoginActivity.class);
-        // clear previous activites and start new screen
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear previous activites and start new screen
         startActivity(intent);
         finish();
     }

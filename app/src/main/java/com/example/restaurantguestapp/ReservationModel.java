@@ -9,8 +9,7 @@ public class ReservationModel {
     private int groupSize;
     private String specialRequests;
 
-    public ReservationModel(int id, String username, String date, String time,
-                            int groupSize, String specialRequests) {
+    public ReservationModel(int id, String username, String date, String time, int groupSize, String specialRequests) {
         this.id = id;
         this.username = username;
         this.date = date;
