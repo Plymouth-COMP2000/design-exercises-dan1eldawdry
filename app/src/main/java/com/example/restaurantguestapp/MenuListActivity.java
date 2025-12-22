@@ -12,10 +12,12 @@ import java.util.List;
 
 public class MenuListActivity extends AppCompatActivity {
 
+    // navigation buttons
     private Button reservationsButton;
     private Button callButton;
     private Button logoutButton;
-    String username;
+
+    private String username; // stores current users username
 
 
     @Override
@@ -25,27 +27,34 @@ public class MenuListActivity extends AppCompatActivity {
 
         username = getIntent().getStringExtra("username"); // gets the username that was passed through
 
+        // link ui and java
+        reservationsButton = findViewById(R.id.reservationsButton);
+        callButton = findViewById(R.id.callButton);
+        logoutButton = findViewById(R.id.logoutButton);
 
-        // find bottom nav buttons
-        reservationsButton = findViewById(R.id.button_reservations);
-        callButton = findViewById(R.id.button_call);
-        logoutButton = findViewById(R.id.button_logout);
+        setupRecyclerView();
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_menu_guest);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        AppDatabaseHelper db = new AppDatabaseHelper(this);
-        List<MenuItemModel> items = db.getAllMenuItems();
-
-        MenuAdapter adapter = new MenuAdapter(this, items, false);
-        recyclerView.setAdapter(adapter);
-
-
-        setupButtonListeners();
+        setupButtons();
     }
 
-    private void setupButtonListeners() {
-        // listner for reservations
+    // sets up the recyclerview that displays menu items
+    private void setupRecyclerView() {
+
+        RecyclerView menuRecyclerView = findViewById(R.id.menuRecyclerView);
+        menuRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<MenuItemModel> menuItems = db.getAllMenuItems();
+
+        // false hides staff edit buttons
+        MenuAdapter adapter = new MenuAdapter(this, menuItems, false);
+        menuRecyclerView.setAdapter(adapter);
+    }
+
+    // click listeners for all buttons on screen
+    private void setupButtons() {
+
+        // opens reservations screen
         reservationsButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, MyReservationsActivity.class);
             intent.putExtra("username", username);
@@ -53,20 +62,20 @@ public class MenuListActivity extends AppCompatActivity {
 
         });
 
-        // listener for call
+        // opens call screen
         callButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, ContactActivity.class);
             intent.putExtra("username", username);
             startActivity(intent);
         });
 
+        // log user out
         logoutButton.setOnClickListener(v -> logoutUser());
     }
-    // logout method
+
     private void logoutUser() {
         Intent intent = new Intent(this, LoginActivity.class);
-        // clear previous activites and start new screen
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear previous activites and start new screen
         startActivity(intent);
         finish();
     }

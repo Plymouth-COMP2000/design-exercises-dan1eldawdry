@@ -13,42 +13,37 @@ import java.util.List;
 
 public class StaffDashboardActivity extends AppCompatActivity {
 
+    // // navigation buttons
     private Button logoutButton;
-    private Button manageMenuNavButton;
-    private Button viewReservationsNavButton;
-    private Button dashboardNavButton;
+    private Button manageMenuButton;
+    private Button viewReservationsButton;
 
-    // static but will by dynamic fields
-    private TextView newReservationsAmountText;
-    private TextView totalMenuItemsAmountText;
-    private AppDatabaseHelper db;
+    // dashbaord stats
+    private TextView reservationCountText;
+    private TextView menuItemCountText;
+
+    private AppDatabaseHelper db; // database helper
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_dashboard);
 
-        logoutButton = findViewById(R.id.button_logout);
-        manageMenuNavButton = findViewById(R.id.button_nav_manage_menu);
-        dashboardNavButton = findViewById(R.id.button_nav_dashboard);
-        viewReservationsNavButton = findViewById(R.id.button_nav_view_reservations);
-        newReservationsAmountText = findViewById(R.id.text_new_reservations_amount);
-        totalMenuItemsAmountText = findViewById(R.id.text_total_menu_items_amount);
+        // link ui and java
+        manageMenuButton = findViewById(R.id.manageMenuButton);
+        viewReservationsButton = findViewById(R.id.viewReservationsButton);
+        logoutButton = findViewById(R.id.logoutButton);
+        reservationCountText = findViewById(R.id.reservationCountText);
+        menuItemCountText = findViewById(R.id.menuItemCountText);
+
         db = new AppDatabaseHelper(this);
-        setupButtonListeners();
 
-        RecyclerView recycler = findViewById(R.id.recycler_staff_notifications);
-        recycler.setLayoutManager(new LinearLayoutManager(this));
-
-        AppDatabaseHelper db = new AppDatabaseHelper(this);
-        List<NotificationModel> notifications = db.getStaffNotifications();
-
-        NotificationAdapter adapter = new NotificationAdapter(this, notifications);
-        recycler.setAdapter(adapter);
-
+        setupNotifications();
 
         loadReservationCount();
         loadMenuItemCount();
+
+        setupButtons();
     }
 
     // makes sure it updates when i return to the dashboard
@@ -56,47 +51,55 @@ public class StaffDashboardActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadReservationCount();
+        loadMenuItemCount();
     }
 
+    // sets up recyclerview for notifications
+    private void setupNotifications() {
 
-    private void setupButtonListeners() {
+        RecyclerView notificationRecyclerView = findViewById(R.id.notificationsRecyclerView);
+        notificationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        List<NotificationModel> notifications = db.getStaffNotifications();
+
+        NotificationAdapter adapter = new NotificationAdapter(this, notifications);
+        notificationRecyclerView.setAdapter(adapter);
+    }
+
+    // click listeners for all buttons on screen
+    private void setupButtons() {
+
+        // opens manage menu screen
+        manageMenuButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, ManageMenuActivity.class));
+        });
+
+        //opens view reservations screen
+        viewReservationsButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, ViewReservationsActivity.class));
+        });
+
+        // log user out
         logoutButton.setOnClickListener(v -> logoutUser());
-
-        if (dashboardNavButton != null) {
-            dashboardNavButton.setOnClickListener(v -> {
-                // already on, dont do anything
-            });
-        }
-
-        manageMenuNavButton.setOnClickListener(v -> {
-            Intent intent = new Intent(StaffDashboardActivity.this, ManageMenuActivity.class);
-            startActivity(intent);
-        });
-
-        viewReservationsNavButton.setOnClickListener(v -> {
-            Intent intent = new Intent(StaffDashboardActivity.this, ViewReservationsActivity.class);
-            startActivity(intent);
-        });
     }
 
-    // logout method
     private void logoutUser() {
         Intent intent = new Intent(this, LoginActivity.class);
-        // clear previous activites and start new screen
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear previous activites and start new screen
         startActivity(intent);
         finish();
     }
 
+    // load and display number of reservations
     private void loadReservationCount() {
         int count = db.getReservationCount();
-        newReservationsAmountText.setText(String.valueOf(count));
+        reservationCountText.setText(String.valueOf(count));
     }
 
+    //load and display number of menu items
     private void loadMenuItemCount() {
         int itemCount = db.getMenuItemCount();
-        totalMenuItemsAmountText.setText(String.valueOf(itemCount));
+        menuItemCountText.setText(String.valueOf(itemCount));
     }
 
 }

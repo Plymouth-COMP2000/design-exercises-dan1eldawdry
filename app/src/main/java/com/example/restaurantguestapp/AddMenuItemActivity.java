@@ -10,15 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddMenuItemActivity extends AppCompatActivity {
 
-    private Button backButton;
+    private Button backButton; // navigation back
 
     // form
-    private EditText itemNameEditText;
-    private EditText itemPriceEditText;
-    private EditText itemDescriptionEditText;
-    private Button saveItemButton;
-    private boolean isEditMode = false;
-    private int menuItemId = -1;
+    private EditText nameInput;
+    private EditText priceInput;
+    private EditText descriptionInput;
+    private Button saveButton;
+
+    private boolean isEditing = false; // used to see if staff is editing or adding an item
+    private int itemId = -1; // stores the id of the item when editing
 
 
     @Override
@@ -26,73 +27,79 @@ public class AddMenuItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_menu_item);
 
-        backButton = findViewById(R.id.button_back);
-        itemNameEditText = findViewById(R.id.edit_text_item_name);
-        itemPriceEditText = findViewById(R.id.edit_text_item_price);
-        itemDescriptionEditText = findViewById(R.id.edit_text_item_description);
-        saveItemButton = findViewById(R.id.button_save_item);
+        // link ui and java
+        backButton = findViewById(R.id.backButton);
+        nameInput = findViewById(R.id.itemNameInput);
+        priceInput = findViewById(R.id.itemPriceInput);
+        descriptionInput = findViewById(R.id.itemDescriptionInput);
+        saveButton = findViewById(R.id.saveItemButton);
 
+        checkForEditMode();
+
+        setupButtons();
+    }
+
+    // checks the intent to see if an item id was passed in.
+    // if it was then it switches to edit mode
+    private void checkForEditMode() {
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("menu_item_id")) {
-            menuItemId = intent.getIntExtra("menu_item_id", -1);
 
-            if (menuItemId != -1) {
-                isEditMode = true;
-                loadMenuItemForEdit(menuItemId);
-                saveItemButton.setText("UPDATE MENU ITEM");
+        if (intent != null && intent.hasExtra("menu_item_id")) {
+            itemId = intent.getIntExtra("menu_item_id", -1);
+
+            if (itemId != -1) {
+                isEditing = true;
+                loadMenuItem(itemId);
+                saveButton.setText("Update Menu Item");
             }
         }
-
-        setupButtonListeners();
     }
 
-    private void setupButtonListeners() {
-
-        if (backButton != null) {
-            backButton.setOnClickListener(v -> {
-                finish();
-            });
-        }
-
-        saveItemButton.setOnClickListener(v -> saveMenuItem());
+    // click listeners for all buttons on screen
+    private void setupButtons() {
+        backButton.setOnClickListener(v -> finish()); // go back a screen
+        saveButton.setOnClickListener(v -> saveMenuItem()); // save or update menu item
     }
 
+    // saves a new menu item or update one already there
     private void saveMenuItem() {
-        String name = itemNameEditText.getText().toString().trim();
-        String price = itemPriceEditText.getText().toString().trim();
-        String description = itemDescriptionEditText.getText().toString().trim();
+        String name = nameInput.getText().toString().trim();
+        String price = priceInput.getText().toString().trim();
+        String description = descriptionInput.getText().toString().trim();
 
+        // makes sure all the fields are filled in
         if (name.isEmpty() || price.isEmpty() || description.isEmpty()) {
-            Toast.makeText(this, "Please fill in all item details.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "please fill in all details.", Toast.LENGTH_LONG).show();
             return;
         }
 
+        //database helper that interacts with database
         AppDatabaseHelper db = new AppDatabaseHelper(this);
 
-        if (isEditMode) {
-            db.updateMenuItem(menuItemId, name, price, description);
-            Toast.makeText(this, "Menu item updated", Toast.LENGTH_SHORT).show();
+        if (isEditing) {
+            // update exisitng item
+            db.updateMenuItem(itemId, name, price, description);
+            Toast.makeText(this, "menu item updated", Toast.LENGTH_SHORT).show();
         } else {
+            // add new item
             db.addMenuItem(name, price, description);
-            Toast.makeText(this, "Menu item added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "menu item added", Toast.LENGTH_SHORT).show();
         }
 
+        // go back to menu manage screen
         startActivity(new Intent(this, ManageMenuActivity.class));
         finish();
     }
 
-
-    private void loadMenuItemForEdit(int id) {
+    // loads an existing items data into the input fields
+    private void loadMenuItem(int id) {
         AppDatabaseHelper db = new AppDatabaseHelper(this);
-        MenuItemModel item = db.getMenuItemById(id);
+        MenuItemModel menuItem = db.getMenuItemById(id);
 
-        if (item != null) {
-            itemNameEditText.setText(item.getName());
-            itemPriceEditText.setText(String.valueOf(item.getPrice()));
-            itemDescriptionEditText.setText(item.getDescription());
-            saveItemButton.setText("UPDATE MENU ITEM");
+        if (menuItem != null) {
+            nameInput.setText(menuItem.getName());
+            priceInput.setText(String.valueOf(menuItem.getPrice()));
+            descriptionInput.setText(menuItem.getDescription());
         }
     }
-
-
 }

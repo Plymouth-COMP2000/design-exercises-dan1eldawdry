@@ -3,7 +3,6 @@ package com.example.restaurantguestapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,64 +12,68 @@ import java.util.List;
 
 public class ManageMenuActivity extends AppCompatActivity {
 
+    // navigation buttons
     private Button logoutButton;
-    private Button addNewItemButton;
-    private Button dashboardNavButton;
-    private Button manageMenuNavButton;
-    private Button viewReservationsNavButton;
+    private Button addItemButton;
+    private Button dashboardButton;
+    private Button manageMenuButton;
+    private Button viewReservationsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_menu);
 
-        logoutButton = findViewById(R.id.button_logout);
-        addNewItemButton = findViewById(R.id.button_add_new_menu_item);
-        dashboardNavButton = findViewById(R.id.button_nav_dashboard);
-        manageMenuNavButton = findViewById(R.id.button_nav_manage_menu);
-        viewReservationsNavButton = findViewById(R.id.button_nav_view_reservations);
+        // link ui and java
+        logoutButton = findViewById(R.id.logoutButton);
+        addItemButton = findViewById(R.id.addMenuItemButton);
+        dashboardButton = findViewById(R.id.dashboardButton);
+        viewReservationsButton = findViewById(R.id.viewReservationsButton);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_menu_staff);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        setupRecyclerView();
 
-        AppDatabaseHelper db = new AppDatabaseHelper(this);
-        List<MenuItemModel> items = db.getAllMenuItems();
-
-        MenuAdapter adapter = new MenuAdapter(this, items, true);
-        recyclerView.setAdapter(adapter);
-
-
-        setupButtonListeners();
+        setupButtons();
     }
 
-    private void setupButtonListeners() {
+    // sets up the recyclerview that displays menu items
+    private void setupRecyclerView(){
+        RecyclerView menuRecyclerView = findViewById(R.id.menuRecyclerView);
+        menuRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        AppDatabaseHelper db = new AppDatabaseHelper(this);
+        List<MenuItemModel> menuItems = db.getAllMenuItems();
+
+        MenuAdapter adapter = new MenuAdapter(this, menuItems, true); // true allows staff editing in the adapter
+        menuRecyclerView.setAdapter(adapter);
+    }
+
+    // click listeners for all buttons on screen
+    private void setupButtons() {
+
+        // opens add new menu item screen
+        addItemButton.setOnClickListener(v ->
+                startActivity(new Intent(this, AddMenuItemActivity.class))
+        );
+
+        //opens staff dashboard screen
+        dashboardButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, StaffDashboardActivity.class));
+            finish();
+        });
+
+        // opens view reservations screen
+        viewReservationsButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, ViewReservationsActivity.class));
+            finish();
+        });
+
+        // log user out
         logoutButton.setOnClickListener(v -> logoutUser());
-
-        addNewItemButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ManageMenuActivity.this, AddMenuItemActivity.class);
-            startActivity(intent);
-        });
-
-        dashboardNavButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ManageMenuActivity.this, StaffDashboardActivity.class);
-            startActivity(intent);
-            finish();
-        });
-
-        manageMenuNavButton.setOnClickListener(v -> {
-        });
-
-        viewReservationsNavButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ManageMenuActivity.this, ViewReservationsActivity.class);
-            startActivity(intent);
-            finish();
-        });
     }
 
     private void logoutUser() {
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear previous activites and start new screen
         startActivity(intent);
         finish();
     }

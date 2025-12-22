@@ -10,356 +10,414 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppDatabaseHelper extends SQLiteOpenHelper {
+
     // database details
     private static final String DATABASE_NAME = "restaurant.db";
     private static final int DATABASE_VERSION = 1;
+
+    // Reservations table
+    public static final String RESERVATION_TABLE = "reservations";
+    public static final String RESERVATION_ID = "id";
+    public static final String RESERVATION_USERNAME = "username";
+    public static final String RESERVATION_DATE = "date";
+    public static final String RESERVATION_TIME = "time";
+    public static final String RESERVATION_GROUP_SIZE = "group_size";
+    public static final String RESERVATION_SPECIAL_REQUESTS = "special_requests";
+
+    // Menu item table
+    public static final String MENU_TABLE = "menu_items";
+    public static final String MENU_ID = "id";
+    public static final String MENU_NAME = "name";
+    public static final String MENU_DESCRIPTION = "description";
+    public static final String MENU_PRICE = "price";
+
     // Notifications table
-    public static final String TABLE_NOTIFICATIONS = "guest_notifications";
-    public static final String COL_NOTIF_ID = "id";
-    public static final String COL_NOTIF_USERNAME = "username";
-    public static final String COL_NOTIF_MESSAGE = "message";
-    public static final String COL_NOTIF_CREATED_AT = "created_at";
+    public static final String NOTIFICATION_TABLE = "guest_notifications";
+    public static final String NOTIFICATION_ID = "id";
+    public static final String NOTIFICATION_USERNAME = "username";
+    public static final String NOTIFICATION_MESSAGE = "message";
+    public static final String NOTIFICATION_CREATED_AT = "created_at";
 
-
+    // constructor to create database helper
     public AppDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     // lifecycle methods
+    // creates all needed tables
     @Override
     public void onCreate(SQLiteDatabase db) {
         // reservations table
-        String createReservationsTable = "CREATE TABLE reservations (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "date TEXT, " +
-                "time TEXT, " +
-                "group_size INTEGER, " +
-                "special_requests TEXT" +
-                ");";
+        String createReservationsTable =
+                "CREATE TABLE " + RESERVATION_TABLE + " (" +
+                        RESERVATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        RESERVATION_USERNAME + " TEXT, " +
+                        RESERVATION_DATE + " TEXT, " +
+                        RESERVATION_TIME + " TEXT, " +
+                        RESERVATION_GROUP_SIZE + " INTEGER, " +
+                        RESERVATION_SPECIAL_REQUESTS + " TEXT" +
+                        ");";
 
         // menu table
-        String createMenuTable = "CREATE TABLE menu_items (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name TEXT," +
-                "description TEXT," +
-                "price REAL" +
-                ");";
+        String createMenuTable =
+                "CREATE TABLE " + MENU_TABLE + " (" +
+                        MENU_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        MENU_NAME + " TEXT, " +
+                        MENU_DESCRIPTION + " TEXT, " +
+                        MENU_PRICE + " REAL" +
+                        ");";
 
         // notification table
-        String createNotificationsTable = "CREATE TABLE " + TABLE_NOTIFICATIONS + " (" +
-                COL_NOTIF_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_NOTIF_USERNAME + " TEXT, " +
-                COL_NOTIF_MESSAGE + " TEXT, " +
-                COL_NOTIF_CREATED_AT + " INTEGER" +
-                ")";
+        String createNotificationsTable =
+                "CREATE TABLE " + NOTIFICATION_TABLE + " (" +
+                        NOTIFICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        NOTIFICATION_USERNAME + " TEXT, " +
+                        NOTIFICATION_MESSAGE + " TEXT, " +
+                        NOTIFICATION_CREATED_AT + " INTEGER" +
+                        ");";
 
         db.execSQL(createReservationsTable);
         db.execSQL(createMenuTable);
         db.execSQL(createNotificationsTable);
     }
 
+    // when database version changes. this drops all tables and recreates them
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //deletion and recreation
-        db.execSQL("DROP TABLE IF EXISTS reservations");
-        db.execSQL("DROP TABLE IF EXISTS menu_items");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
+        db.execSQL("DROP TABLE IF EXISTS " + RESERVATION_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + MENU_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + NOTIFICATION_TABLE);
         onCreate(db);
     }
 
-    // add new reservation
-    public boolean insertReservation(String username, String date, String time, int groupSize,
-                                     String specialRequests) {
+    // RESERVATION METHODS BELOW
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
+    // inserts new reservation
+    public boolean addReservation(String username, String date, String time, int groupSize, String specialRequests) {
 
-        cv.put("username", username);
-        cv.put("date", date);
-        cv.put("time", time);
-        cv.put("group_size", groupSize);
-        cv.put("special_requests", specialRequests);
-
-        long result = db.insert("reservations", null, cv);
-        return result != -1; // true if success
-    }
-
-    // get users reservastions (for guest)
-    public ArrayList<ReservationModel> getReservationsForUser(String username) {
-        ArrayList<ReservationModel> list = new ArrayList<>();
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM reservations WHERE username=?",
-                new String[]{username});
-
-        if (cursor.moveToFirst()) {
-            do {
-                ReservationModel r = new ReservationModel(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getInt(4),
-                        cursor.getString(5)
-                );
-                list.add(r);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return list;
-    }
-
-    // get all reservations (for staff)
-    public ArrayList<ReservationModel> getAllReservations() {
-        ArrayList<ReservationModel> list = new ArrayList<>();
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM reservations ORDER BY date, time", null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                ReservationModel r = new ReservationModel(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getInt(4),
-                        cursor.getString(5)
-                );
-                list.add(r);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return list;
-    }
-
-    // edit a reservation
-    public boolean editReservation(ReservationModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put("date", model.getDate());
-        values.put("time", model.getTime());
-        values.put("group_size", model.getGroupSize());
-        values.put("special_requests", model.getSpecialRequests());
+        values.put(RESERVATION_USERNAME, username);
+        values.put(RESERVATION_DATE, date);
+        values.put(RESERVATION_TIME, time);
+        values.put(RESERVATION_GROUP_SIZE, groupSize);
+        values.put(RESERVATION_SPECIAL_REQUESTS, specialRequests);
 
-        int rows = db.update("reservations", values, "id=?", new String[]{String.valueOf(model.getId())});
-        return rows > 0;
+        return db.insert(RESERVATION_TABLE, null, values) != -1;
     }
 
-    // delete a reservation
-    public boolean deleteReservation(int id) {
+    // returns reservations for the logged in user
+    public ArrayList<ReservationModel> getReservationsForUser(String username) {
+
+        ArrayList<ReservationModel> reservations = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                RESERVATION_TABLE,
+                null,
+                RESERVATION_USERNAME + "=?",
+                new String[]{username},
+                null, null, null
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                reservations.add(new ReservationModel(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(RESERVATION_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_USERNAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_DATE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_TIME)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(RESERVATION_GROUP_SIZE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_SPECIAL_REQUESTS))
+                ));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return reservations;
+    }
+
+    // returns all reservations for staff
+    public ArrayList<ReservationModel> getAllReservations() {
+
+        ArrayList<ReservationModel> reservations = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                RESERVATION_TABLE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                RESERVATION_DATE + ", " + RESERVATION_TIME
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                reservations.add(new ReservationModel(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(RESERVATION_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_USERNAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_DATE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_TIME)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(RESERVATION_GROUP_SIZE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_SPECIAL_REQUESTS))
+                ));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return reservations;
+    }
+
+    // update an exisitng reservation
+    public boolean updateReservation(ReservationModel reservation) {
+
         SQLiteDatabase db = this.getWritableDatabase();
-        int rows = db.delete("reservations", "id=?", new String[]{String.valueOf(id)});
-        return rows > 0;
+        ContentValues values = new ContentValues();
+
+        values.put(RESERVATION_DATE, reservation.getDate());
+        values.put(RESERVATION_TIME, reservation.getTime());
+        values.put(RESERVATION_GROUP_SIZE, reservation.getGroupSize());
+        values.put(RESERVATION_SPECIAL_REQUESTS, reservation.getSpecialRequests());
+
+        return db.update(
+                RESERVATION_TABLE,
+                values,
+                RESERVATION_ID + "=?",
+                new String[]{String.valueOf(reservation.getId())}
+        ) > 0;
+    }
+
+    // delete a reservation by its id
+    public boolean deleteReservation(int reservationId) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(
+                RESERVATION_TABLE,
+                RESERVATION_ID + "=?",
+                new String[]{String.valueOf(reservationId)}
+        ) > 0;
     }
 
     // get a single reservation by its id
-    public ReservationModel getReservationById(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+    public ReservationModel getReservationById(int reservationId) {
 
-        Cursor cursor = db.rawQuery(
-                "SELECT * FROM reservations WHERE id=?",
-                new String[]{String.valueOf(id)}
+        SQLiteDatabase db = this.getReadableDatabase();
+        ReservationModel reservation = null;
+
+        Cursor cursor = db.query(
+                RESERVATION_TABLE,
+                null,
+                RESERVATION_ID + "=?",
+                new String[]{String.valueOf(reservationId)},
+                null,
+                null,
+                null
         );
 
-        ReservationModel r = null;
-
         if (cursor.moveToFirst()) {
-            r = new ReservationModel(
-                    cursor.getInt(0),   // id
-                    cursor.getString(1),// username
-                    cursor.getString(2),// date
-                    cursor.getString(3),// time
-                    cursor.getInt(4),   // group size
-                    cursor.getString(5)// special requests
+            reservation = new ReservationModel(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(RESERVATION_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_USERNAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_DATE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_TIME)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(RESERVATION_GROUP_SIZE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(RESERVATION_SPECIAL_REQUESTS))
             );
         }
 
         cursor.close();
-        return r;
+        return reservation;
     }
 
-    // so i can update staff dashboard reservation counter
+    // returns total number of reservations for staff dashboard
     public int getReservationCount() {
+
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "SELECT COUNT(*) FROM reservations",
+                "SELECT COUNT(*) FROM " + RESERVATION_TABLE,
                 null
         );
 
         int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
+        if (cursor.moveToFirst()) count = cursor.getInt(0);
 
         cursor.close();
-        db.close();
         return count;
     }
 
+    // MENU ITEM METHODS BELOW
+
+    // adds a new menu item
     public void addMenuItem(String name, String description, String price) {
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("description", description);
-        values.put("price", price);
+
+        values.put(MENU_NAME, name);
+        values.put(MENU_DESCRIPTION, description);
+        values.put(MENU_PRICE, price);
+
         db.insert("menu_items", null, values);
     }
 
-    public void updateMenuItem(int id, String name, String description, String price) {
+    // updates an exisitng menu item
+    public void updateMenuItem(int itemId, String name, String description, String price) {
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("description", description);
-        values.put("price", price);
-        db.update("menu_items", values, "id=?", new String[]{String.valueOf(id)});
+
+        values.put(MENU_NAME, name);
+        values.put(MENU_DESCRIPTION, description);
+        values.put(MENU_PRICE, price);
+
+        db.update(
+                MENU_TABLE,
+                values,
+                MENU_ID + "=?",
+                new String[]{String.valueOf(itemId)}
+        );
     }
 
-    public void deleteMenuItem(int id) {
+    // delete a menu item by its id
+    public void deleteMenuItem(int itemId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("menu_items", "id=?", new String[]{String.valueOf(id)});
+        db.delete(MENU_TABLE, MENU_ID + "=?", new String[]{String.valueOf(itemId)});
     }
 
+    // returns all menu items
     public List<MenuItemModel> getAllMenuItems() {
-        List<MenuItemModel> items = new ArrayList<>();
+
+        List<MenuItemModel> menuItems = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM menu_items", null);
+        Cursor cursor = db.query(
+                MENU_TABLE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         if (cursor.moveToFirst()) {
             do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-                String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-                String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
-                String description = cursor.getString(cursor.getColumnIndexOrThrow("description"));
-
-                items.add(new MenuItemModel(id, name, price, description));
+                menuItems.add(new MenuItemModel(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MENU_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(MENU_NAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(MENU_PRICE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(MENU_DESCRIPTION))
+                ));
             } while (cursor.moveToNext());
         }
 
         cursor.close();
-        return items;
+        return menuItems;
     }
 
+    // returns one menu item by its id
+    public MenuItemModel getMenuItemById(int itemId) {
 
-    public MenuItemModel getMenuItemById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
+        MenuItemModel menuItem = null;
 
-        Cursor cursor = db.rawQuery(
-                "SELECT * FROM menu_items WHERE id = ?",
-                new String[]{String.valueOf(id)}
+        Cursor cursor = db.query(
+                MENU_TABLE,
+                null,
+                MENU_ID + "=?",
+                new String[]{String.valueOf(itemId)},
+                null,
+                null,
+                null
         );
 
-        MenuItemModel item = null;
-
         if (cursor.moveToFirst()) {
-            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-            String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
-            String description = cursor.getString(cursor.getColumnIndexOrThrow("description"));
-
-            item = new MenuItemModel(id, name, price, description);
+            menuItem = new MenuItemModel(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(MENU_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(MENU_NAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(MENU_PRICE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(MENU_DESCRIPTION))
+            );
         }
 
         cursor.close();
-        return item;
+        return menuItem;
     }
 
+    // returns number of menu items for staff dashboard
     public int getMenuItemCount() {
+
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM menu_items", null);
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + MENU_TABLE,
+                null
+        );
 
         int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
+        if (cursor.moveToFirst()) count = cursor.getInt(0);
 
         cursor.close();
         return count;
     }
 
+    // NOTIFICATION METHODS BELOW
+
+    // adds notification for guest
     public void addGuestNotification(String username, String message) {
+
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_NOTIF_USERNAME, username);
-        cv.put(COL_NOTIF_MESSAGE, message);
-        cv.put(COL_NOTIF_CREATED_AT, System.currentTimeMillis());
-        db.insert(TABLE_NOTIFICATIONS, null, cv);
+        ContentValues values = new ContentValues();
+
+        values.put(NOTIFICATION_USERNAME, username);
+        values.put(NOTIFICATION_MESSAGE, message);
+        values.put(NOTIFICATION_CREATED_AT, System.currentTimeMillis());
+
+        db.insert(NOTIFICATION_TABLE, null, values);
         db.close();
     }
 
+    // returns all notifications for guest
     public List<NotificationModel> getGuestNotifications(String username) {
-        List<NotificationModel> list = new ArrayList<>();
+
+        List<NotificationModel> notifications = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT * FROM " + TABLE_NOTIFICATIONS +
-                " WHERE " + COL_NOTIF_USERNAME + "=? " +
-                " ORDER BY " + COL_NOTIF_CREATED_AT + " DESC";
-
-        Cursor cursor = db.rawQuery(query, new String[]{username});
-
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_NOTIF_ID));
-                String u = cursor.getString(cursor.getColumnIndexOrThrow(COL_NOTIF_USERNAME));
-                String msg = cursor.getString(cursor.getColumnIndexOrThrow(COL_NOTIF_MESSAGE));
-                long createdAt = cursor.getLong(cursor.getColumnIndexOrThrow(COL_NOTIF_CREATED_AT));
-
-                list.add(new NotificationModel(id, u, msg, createdAt));
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-        return list;
-    }
-
-    public void addStaffNotification(String message) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-
-        cv.put(COL_NOTIF_USERNAME, "STAFF");
-        cv.put(COL_NOTIF_MESSAGE, message);
-        cv.put(COL_NOTIF_CREATED_AT, System.currentTimeMillis());
-
-        db.insert(TABLE_NOTIFICATIONS, null, cv);
-        db.close();
-    }
-
-    public List<NotificationModel> getStaffNotifications() {
-
-        List<NotificationModel> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery(
-                "SELECT * FROM " + TABLE_NOTIFICATIONS +
-                        " WHERE " + COL_NOTIF_USERNAME + "=? " +
-                        " ORDER BY " + COL_NOTIF_CREATED_AT + " DESC",
-                new String[]{"STAFF"}
+        Cursor cursor = db.query(
+                NOTIFICATION_TABLE,
+                null,
+                NOTIFICATION_USERNAME + "=?",
+                new String[]{username},
+                null,
+                null,
+                NOTIFICATION_CREATED_AT + " DESC"
         );
 
         if (cursor.moveToFirst()) {
             do {
-                NotificationModel n = new NotificationModel(
-                        cursor.getInt(0),      // id
-                        cursor.getString(1),   // knowing if its staff
-                        cursor.getString(2),   // message
-                        cursor.getLong(3)      // created_at
-                );
-                list.add(n);
+                notifications.add(new NotificationModel(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(NOTIFICATION_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(NOTIFICATION_USERNAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(NOTIFICATION_MESSAGE)),
+                        cursor.getLong(cursor.getColumnIndexOrThrow(NOTIFICATION_CREATED_AT))
+                ));
             } while (cursor.moveToNext());
         }
 
         cursor.close();
-        db.close();
-        return list;
+        return notifications;
     }
 
+    // add notification visible to staff only
+    public void addStaffNotification(String message) {
+        addGuestNotification("STAFF", message);
+    }
 
-
-
+    // returns all staff notifications
+    public List<NotificationModel> getStaffNotifications() {
+        return getGuestNotifications("STAFF");
+    }
 }
 

@@ -17,17 +17,12 @@ public class MenuItemModel {
     public int getId() {
         return id;
     }
-
     public String getName() {
         return name;
     }
-
     public String getDescription() {
         return description;
     }
-
-    public String getPrice() {
-        return price;
-    }
+    public String getPrice() {return price;}
 }
 
