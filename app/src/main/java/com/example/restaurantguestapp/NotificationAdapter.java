@@ -13,43 +13,50 @@ import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
-    private Context context;
-    private List<NotificationModel> notifications;
+    private Context context; // context used for views and activites
+    private List<NotificationModel> notificationList; // list of notifications to display
 
+    // constructor
     public NotificationAdapter(Context context, List<NotificationModel> notifications) {
         this.context = context;
-        this.notifications = notifications;
+        this.notificationList = notifications;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.notification_item, parent, false);
-        return new ViewHolder(v);
+
+        // inflate notification item layout
+        View view = LayoutInflater.from(context).inflate(R.layout.notification_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        NotificationModel n = notifications.get(position);
-        holder.textNotification.setText(n.getMessage());
+
+        // get notification at this position
+        NotificationModel notification = notificationList.get(position);
+        holder.messageText.setText(notification.getMessage());
     }
 
     @Override
     public int getItemCount() {
-        return notifications == null ? 0 : notifications.size();
+        return notificationList == null ? 0 : notificationList.size();
     }
 
-    public void setNotifications(List<NotificationModel> newList) {
-        this.notifications = newList;
+    // updates notification list and refreshes recyclerview
+    public void setNotifications(List<NotificationModel> notifications) {
+        this.notificationList = notifications;
         notifyDataSetChanged();
     }
 
+    // viewholder to store references to notification item views
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textNotification;
+        TextView messageText;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textNotification = itemView.findViewById(R.id.text_notification_message);
+            messageText = itemView.findViewById(R.id.notificationMessageText);
         }
     }
 }

@@ -11,14 +11,16 @@ import androidx.core.app.NotificationCompat;
 
 public class NotificationHelper {
 
-    private static final String CHANNEL_ID = "guest_notifications";
+    private static final String CHANNEL_ID = "guest_notifications"; // id for notification channel
     private Context context;
 
+    // constructor
     public NotificationHelper(Context context) {
         this.context = context;
         createChannel();
     }
 
+    // creates the notification channel
     private void createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager manager =
@@ -36,6 +38,7 @@ public class NotificationHelper {
         }
     }
 
+    // sends a notification to the user
     public void send(String title, String message) {
 
         Intent intent = new Intent(context, MyReservationsActivity.class);
@@ -48,6 +51,7 @@ public class NotificationHelper {
                 PendingIntent.FLAG_MUTABLE
         );
 
+        // builds the notification
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(R.drawable.notification)
@@ -56,6 +60,7 @@ public class NotificationHelper {
                         .setAutoCancel(true)
                         .setContentIntent(pendingIntent);
 
+        // sends the notificiton
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
